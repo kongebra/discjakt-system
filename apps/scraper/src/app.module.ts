@@ -8,11 +8,14 @@ import { ManufacturersController } from './manufacturers/manufacturers.controlle
 import { PriceParserService } from './price-parser/price-parser.service';
 import { PrismaService } from './prisma/prisma.service';
 import { ProductsController } from './products/products.controller';
+import { RetailersController } from './retailers/retailers.controller';
+import { RetailersService } from './retailers/retailers.service';
 import { RobotsTxtService } from './robots-txt/robots-txt.service';
 import { ScraperController } from './scraper/scraper.controller';
 import { ScraperService } from './scraper/scraper.service';
-import { TasksService } from './tasks/tasks.service';
 import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
+import { SlugifyService } from './slugify/slugify.service';
+import { TasksService } from './tasks/tasks.service';
 
 @Module({
   imports: [
@@ -32,6 +35,7 @@ import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
     ProductsController,
     ManufacturersController,
     ScraperController,
+    RetailersController,
   ],
   providers: [
     AppService,
@@ -41,6 +45,8 @@ import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
     PriceParserService,
     RobotsTxtService,
     SitemapParserService,
+    RetailersService,
+    SlugifyService,
   ],
 })
 export class AppModule {}
