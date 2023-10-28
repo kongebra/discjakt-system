@@ -1,0 +1,3 @@
+# Discjakt
+
+TODO: Implement readme
