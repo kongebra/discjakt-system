@@ -1,9 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { CheerioAPI, load } from 'cheerio';
-import { SELECTORS } from './selectors';
 import { PriceParserService } from '../price-parser/price-parser.service';
-import { AxiosError } from 'axios';
+import { SELECTORS } from './selectors';
 
 type ScrapeResult = {
   status: number;
@@ -42,10 +41,6 @@ export class ScraperService {
         statusText: response.statusText,
       };
 
-      if (response.status !== 200) {
-        return result;
-      }
-
       const html = response.data;
       const $ = load(html);
 
@@ -83,24 +78,15 @@ export class ScraperService {
 
       return result;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.logger.error(
-          `Failed to scrape url ${url}: ${error.response?.statusText}`,
-        );
+      return {
+        title: null,
+        description: null,
+        price: null,
+        image_url: null,
 
-        return {
-          title: null,
-          description: null,
-          price: null,
-          image_url: null,
-
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-        } satisfies ScrapeResult;
-      }
-
-      this.logger.error(`Failed to scrape url ${url}: ${error.message}`);
-      throw error;
+        status: error?.response?.status,
+        statusText: error?.response?.statusText,
+      } satisfies ScrapeResult;
     }
   }
 

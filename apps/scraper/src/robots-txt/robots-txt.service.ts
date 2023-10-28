@@ -1,6 +1,5 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { AxiosError } from 'axios';
 
 export type RobotsTxt = {
   userAgents: {
@@ -67,18 +66,11 @@ export class RobotsTxtService {
         },
       });
 
-      if (response.status !== 200) {
-        return null;
-      }
-
       return this.parse(response.data);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return null;
-      }
-
       this.logger.error("Couldn't get robots.txt", error.message);
-      throw error;
+
+      return null;
     }
   }
 }

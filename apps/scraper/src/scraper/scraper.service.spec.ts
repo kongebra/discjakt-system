@@ -177,4 +177,16 @@ describe('ScraperService', () => {
       expect(result.description).toBeDefined();
     });
   });
+
+  it("should return null if product page doesn't exist", async () => {
+    const result = await service.scrape(
+      'https://aceshop.no/products/k1-grym-not-found',
+    );
+
+    expect(result.status).toEqual(404);
+    expect(result.title).toBeNull();
+    expect(result.price).toBeNull();
+    expect(result.image_url).toBeNull();
+    expect(result.description).toBeNull();
+  });
 });
