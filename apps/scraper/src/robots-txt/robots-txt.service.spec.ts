@@ -71,5 +71,18 @@ Sitemap: https://example.com/sitemap.xml`;
         'https://example.com/sitemap.xml',
       );
     });
+
+    it('should parse this', () => {
+      const input = `Sitemap: https://golfkongen.no/sitemap.xml
+
+User-agent: *
+Disallow: /apps/*
+
+User-agent: *
+Disallow: /success/*`;
+
+      const result = service.parse(input);
+      expect(result.userAgents.length).toEqual(2);
+    });
   });
 });

@@ -53,9 +53,9 @@ model Disc {
     turn  Float
     fade  Float
 
-    manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
-    manufacturer_id String
-    Product         Product[]
+    manufacturer      Manufacturer @relation(fields: [manufacturer_slug], references: [slug])
+    manufacturer_slug String
+    Product           Product[]
 
     @@index([type])
 }
@@ -71,8 +71,8 @@ model Plastic {
     slug        String  @unique
     description String?
 
-    manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
-    manufacturer_id String
+    manufacturer      Manufacturer @relation(fields: [manufacturer_slug], references: [slug])
+    manufacturer_slug String
 
     products Product[]
 }
@@ -115,21 +115,23 @@ model Product {
     description String?
     image_url   String?
     url         String  @unique
+    lastmod     String?
+    priority    String?
 
     meta_title       String?
     meta_description String?
     meta_keywords    String?
 
-    retailer    Retailer @relation(fields: [retailer_id], references: [id])
-    retailer_id String
+    retailer      Retailer @relation(fields: [retailer_slug], references: [slug])
+    retailer_slug String
 
     category ProductCategory @default(NOT_SET)
 
-    disc    Disc?   @relation(fields: [disc_id], references: [id])
-    disc_id String?
+    disc      Disc?   @relation(fields: [disc_slug], references: [slug])
+    disc_slug String?
 
-    plastic    Plastic? @relation(fields: [plastic_id], references: [id])
-    plastic_id String?
+    plastic      Plastic? @relation(fields: [plastic_slug], references: [slug])
+    plastic_slug String?
 
     price_history PriceHistory[]
 

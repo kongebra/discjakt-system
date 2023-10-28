@@ -16,6 +16,7 @@ import { ScraperService } from './scraper/scraper.service';
 import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
 import { SlugifyService } from './slugify/slugify.service';
 import { TasksService } from './tasks/tasks.service';
+import { TaskProcessor } from './tasks/task.processor';
 
 @Module({
   imports: [
@@ -26,6 +27,9 @@ import { TasksService } from './tasks/tasks.service';
         username: process.env.REDISUSER,
         password: process.env.REDISPASSWORD,
       },
+    }),
+    BullModule.registerQueue({
+      name: 'products',
     }),
     ScheduleModule.forRoot(),
     HttpModule,
@@ -47,6 +51,7 @@ import { TasksService } from './tasks/tasks.service';
     SitemapParserService,
     RetailersService,
     SlugifyService,
+    TaskProcessor,
   ],
 })
 export class AppModule {}

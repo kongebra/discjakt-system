@@ -1,5 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { RetailersService } from './retailers.service';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { RetailerCreateDto, RetailersService } from './retailers.service';
 
 @Controller('retailers')
 export class RetailersController {
@@ -7,11 +15,42 @@ export class RetailersController {
 
   @Get()
   public async getRetailers() {
-    return this.service.getRetailers();
+    return await this.service.getRetailers();
   }
 
-  @Get('/:slug')
-  public async getRetailer(slug: string) {
-    return this.service.getRetailer(slug);
+  @Get(':slug')
+  public async getRetailer(@Param('slug') slug: string) {
+    const retailer = await this.service.getRetailer(slug);
+
+    if (!retailer) {
+      throw new NotFoundException('retailer not found', {
+        cause: new Error(),
+        description: `retailer with slug '${slug}' doesn't exist`,
+      });
+    }
+
+    return retailer;
+  }
+
+  @Post()
+  public async createRetailer(@Body() data: RetailerCreateDto) {
+    return await this.service.createRetailer(data);
+  }
+
+  @Put(':slug')
+  public async updateRetailer(
+    @Param('slug') slug: string,
+    @Body() data: RetailerCreateDto,
+  ) {
+    const retailer = await this.service.updateRetailer(slug, data);
+
+    if (!retailer) {
+      throw new NotFoundException('retailer not found', {
+        cause: new Error(),
+        description: `retailer with slug '${slug}' doesn't exist`,
+      });
+    }
+
+    return retailer;
   }
 }

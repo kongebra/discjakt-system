@@ -9,6 +9,8 @@ export type RobotsTxt = {
     crawlDelay?: number;
     sitemap?: string;
   }[];
+
+  sitemap?: string;
 };
 
 @Injectable()
@@ -21,6 +23,7 @@ export class RobotsTxtService {
     const lines = input.split('\n');
     const userAgents: any[] = [];
     let currentUserAgent: any = null;
+    let sitemap: string | null = null;
 
     for (const line of lines) {
       const trimmedLine = line.trim();
@@ -43,11 +46,12 @@ export class RobotsTxtService {
           10,
         );
       } else if (trimmedLine.startsWith('Sitemap:')) {
-        currentUserAgent.sitemap = trimmedLine
-          .split(':')
-          .slice(1)
-          .join(':')
-          .trim();
+        const currentSitemap = trimmedLine.split(':').slice(1).join(':').trim();
+        if (currentUserAgent) {
+          currentUserAgent.sitemap = currentSitemap;
+        } else {
+          sitemap = currentSitemap;
+        }
       }
     }
 
@@ -55,7 +59,7 @@ export class RobotsTxtService {
       userAgents.push(currentUserAgent);
     }
 
-    return { userAgents };
+    return { userAgents, sitemap };
   }
 
   public async fetchAndParse(url: string): Promise<RobotsTxt | null> {
@@ -68,9 +72,34 @@ export class RobotsTxtService {
 
       return this.parse(response.data);
     } catch (error) {
-      this.logger.error("Couldn't get robots.txt", error.message);
+      this.logger.error(`Couldn't get robots.txt from ${url}`, error.message);
 
       return null;
     }
+  }
+
+  public getBestMatchingUserAgent(
+    robotsTxt: RobotsTxt,
+    userAgentName: string,
+  ): any | null {
+    const userAgent = robotsTxt.userAgents.find(
+      (ua) => ua.name === userAgentName,
+    );
+    if (userAgent) {
+      return userAgent;
+    }
+
+    const wildCardUserAgent = robotsTxt.userAgents.find(
+      (ua) => ua.name === '*',
+    );
+    if (wildCardUserAgent) {
+      return wildCardUserAgent;
+    }
+
+    if (robotsTxt.userAgents.length === 0) {
+      return null;
+    }
+
+    return robotsTxt.userAgents[0];
   }
 }
