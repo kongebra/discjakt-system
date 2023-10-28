@@ -1,0 +1,204 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Manufacturer {
+    id String @id @default(cuid())
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name        String  @unique
+    slug        String  @unique
+    description String?
+    image_url   String?
+
+    discs    Disc[]
+    plastics Plastic[]
+}
+
+enum DiscType {
+    PUTTER
+    MIDRANGE
+    FAIRWAY
+    DISTANCE
+}
+
+model Disc {
+    id String @id @default(cuid())
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name        String  @unique
+    slug        String  @unique
+    description String?
+
+    image_url    String?
+    image_width  Int?
+    image_height Int?
+    image_format String?
+
+    type DiscType
+
+    speed Float
+    glide Float
+    turn  Float
+    fade  Float
+
+    manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
+    manufacturer_id String
+    Product         Product[]
+
+    @@index([type])
+}
+
+model Plastic {
+    id String @id @default(cuid())
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name        String
+    slug        String  @unique
+    description String?
+
+    manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
+    manufacturer_id String
+
+    products Product[]
+}
+
+model Retailer {
+    id String @id @default(cuid())
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name        String
+    slug        String  @unique
+    description String?
+    image_url   String?
+    website_url String
+
+    products Product[]
+}
+
+enum ProductCategory {
+    DISC
+    BAG
+    ACCESSORY
+    APPAREL
+    EQUIPMENT
+    BASKET
+    OTHER
+    NOT_SET
+}
+
+model Product {
+    id String @id @default(cuid())
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name        String
+    description String?
+    image_url   String?
+    url         String  @unique
+
+    meta_title       String?
+    meta_description String?
+    meta_keywords    String?
+
+    retailer    Retailer @relation(fields: [retailer_id], references: [id])
+    retailer_id String
+
+    category ProductCategory @default(NOT_SET)
+
+    disc    Disc?   @relation(fields: [disc_id], references: [id])
+    disc_id String?
+
+    plastic    Plastic? @relation(fields: [plastic_id], references: [id])
+    plastic_id String?
+
+    price_history PriceHistory[]
+
+    @@index([category])
+}
+
+model PriceHistory {
+    id String @id @default(cuid())
+
+    current_price  Float
+    original_price Float
+    in_stock       Boolean
+    is_promotion   Boolean @default(false)
+
+    created_at DateTime @default(now())
+
+    product    Product @relation(fields: [product_id], references: [id])
+    product_id String
+}
+
+// next-auth
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+    ADMIN
+    SUBSCRIBER
+    USER
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    role          Role      @default(USER)
+    accounts      Account[]
+    sessions      Session[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}

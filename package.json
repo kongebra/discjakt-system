@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:scraper": "turbo run dev --filter=scraper",
+    "dev:web": "turbo run dev --filter=web",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:migrate:deploy": "turbo run db:migrate:deploy",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed"
+  },
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3",
+    "turbo": "^1.10.16"
+  },
+  "packageManager": "pnpm@8.6.7"
+}
