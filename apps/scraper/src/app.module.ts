@@ -5,12 +5,14 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ManufacturersController } from './manufacturers/manufacturers.controller';
+import { PriceParserService } from './price-parser/price-parser.service';
 import { PrismaService } from './prisma/prisma.service';
 import { ProductsController } from './products/products.controller';
+import { RobotsTxtService } from './robots-txt/robots-txt.service';
 import { ScraperController } from './scraper/scraper.controller';
 import { ScraperService } from './scraper/scraper.service';
 import { TasksService } from './tasks/tasks.service';
-import { PriceParserService } from './price-parser/price-parser.service';
+import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { PriceParserService } from './price-parser/price-parser.service';
     TasksService,
     ScraperService,
     PriceParserService,
+    RobotsTxtService,
+    SitemapParserService,
   ],
 })
 export class AppModule {}

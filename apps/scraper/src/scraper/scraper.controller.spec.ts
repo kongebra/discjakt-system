@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ScraperController } from './scraper.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ScraperService } from './scraper.service';
+import { PriceParserService } from '../price-parser/price-parser.service';
 
 describe('ScraperController', () => {
   let controller: ScraperController;
@@ -9,7 +10,7 @@ describe('ScraperController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
-      providers: [ScraperService],
+      providers: [PriceParserService, ScraperService],
       controllers: [ScraperController],
     }).compile();
 
