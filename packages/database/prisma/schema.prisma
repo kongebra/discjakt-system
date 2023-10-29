@@ -90,6 +90,10 @@ model Retailer {
     image_url   String?
     website_url String
 
+    crawl_delay Int?
+    disallowed  String?
+    allowed     String?
+
     products Product[]
 }
 

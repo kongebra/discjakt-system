@@ -17,6 +17,8 @@ import { SitemapParserService } from './sitemap-parser/sitemap-parser.service';
 import { SlugifyService } from './slugify/slugify.service';
 import { TasksService } from './tasks/tasks.service';
 import { TaskProcessor } from './tasks/task.processor';
+import { QueueService } from './queue/queue.service';
+import { QueueController } from './queue/queue.controller';
 
 @Module({
   imports: [
@@ -30,6 +32,10 @@ import { TaskProcessor } from './tasks/task.processor';
     }),
     BullModule.registerQueue({
       name: 'products',
+      limiter: {
+        max: 10,
+        duration: 1000,
+      },
     }),
     ScheduleModule.forRoot(),
     HttpModule,
@@ -40,6 +46,7 @@ import { TaskProcessor } from './tasks/task.processor';
     ManufacturersController,
     ScraperController,
     RetailersController,
+    QueueController,
   ],
   providers: [
     AppService,
@@ -52,6 +59,7 @@ import { TaskProcessor } from './tasks/task.processor';
     RetailersService,
     SlugifyService,
     TaskProcessor,
+    QueueService,
   ],
 })
 export class AppModule {}

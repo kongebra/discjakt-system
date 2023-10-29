@@ -34,7 +34,9 @@ export class RetailersController {
 
   @Post()
   public async createRetailer(@Body() data: RetailerCreateDto) {
-    return await this.service.createRetailer(data);
+    const retailer = await this.service.createRetailer(data);
+
+    return retailer;
   }
 
   @Put(':slug')
@@ -43,6 +45,20 @@ export class RetailersController {
     @Body() data: RetailerCreateDto,
   ) {
     const retailer = await this.service.updateRetailer(slug, data);
+
+    if (!retailer) {
+      throw new NotFoundException('retailer not found', {
+        cause: new Error(),
+        description: `retailer with slug '${slug}' doesn't exist`,
+      });
+    }
+
+    return retailer;
+  }
+
+  @Put(':slug/robots-txt')
+  public async updateRetailerRobotsTxt(@Param('slug') slug: string) {
+    const retailer = await this.service.updateRetailerRobotsTxt(slug);
 
     if (!retailer) {
       throw new NotFoundException('retailer not found', {

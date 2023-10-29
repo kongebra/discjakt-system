@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SlugifyService } from '../slugify/slugify.service';
+import { RobotsTxtService } from '../robots-txt/robots-txt.service';
 
 export type RetailerCreateDto = {
   name: string;
@@ -14,6 +15,7 @@ export class RetailersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly slugify: SlugifyService,
+    private readonly robotsTxt: RobotsTxtService,
   ) {}
 
   public async getRetailers() {
@@ -24,6 +26,9 @@ export class RetailersService {
         description: true,
         image_url: true,
         website_url: true,
+        crawl_delay: true,
+        allowed: true,
+        disallowed: true,
       },
     });
   }
@@ -39,15 +44,32 @@ export class RetailersService {
         description: true,
         image_url: true,
         website_url: true,
+        crawl_delay: true,
+        allowed: true,
+        disallowed: true,
       },
     });
   }
 
   public async createRetailer(data: RetailerCreateDto) {
-    return this.prisma.retailer.create({
+    const robotsTxtUrl = new URL('/robots.txt', data.website_url);
+    const robotsTxt = await this.robotsTxt.fetchAndParse(
+      robotsTxtUrl.toString(),
+    );
+
+    const userAgent = this.robotsTxt.getBestMatchingUserAgent(
+      robotsTxt,
+      'DiscjaktBot',
+    );
+
+    const retailer = this.prisma.retailer.create({
       data: {
         ...data,
         slug: this.slugify.slugify(data.name),
+
+        crawl_delay: userAgent?.crawlDelay ?? 1000,
+        allowed: userAgent?.allow.join(';') ?? '',
+        disallowed: userAgent?.disallow.join(';') ?? '',
       },
       select: {
         name: true,
@@ -55,11 +77,26 @@ export class RetailersService {
         description: true,
         image_url: true,
         website_url: true,
+        crawl_delay: true,
+        allowed: true,
+        disallowed: true,
       },
     });
+
+    return retailer;
   }
 
   public async updateRetailer(slug: string, data: RetailerCreateDto) {
+    const robotsTxtUrl = new URL('/robots.txt', data.website_url);
+    const robotsTxt = await this.robotsTxt.fetchAndParse(
+      robotsTxtUrl.toString(),
+    );
+
+    const userAgent = this.robotsTxt.getBestMatchingUserAgent(
+      robotsTxt,
+      'DiscjaktBot',
+    );
+
     return this.prisma.retailer.update({
       where: {
         slug,
@@ -67,6 +104,10 @@ export class RetailersService {
       data: {
         ...data,
         slug: this.slugify.slugify(data.name),
+
+        crawl_delay: userAgent?.crawlDelay ?? 1,
+        allowed: userAgent?.allow.join(';') ?? '',
+        disallowed: userAgent?.disallow.join(';') ?? '',
       },
       select: {
         name: true,
@@ -74,6 +115,47 @@ export class RetailersService {
         description: true,
         image_url: true,
         website_url: true,
+        crawl_delay: true,
+        allowed: true,
+        disallowed: true,
+      },
+    });
+  }
+
+  public async updateRetailerRobotsTxt(slug: string) {
+    const retailer = await this.getRetailer(slug);
+    if (!retailer) {
+      return null;
+    }
+
+    const robotsTxtUrl = new URL('/robots.txt', retailer.website_url);
+    const robotsTxt = await this.robotsTxt.fetchAndParse(
+      robotsTxtUrl.toString(),
+    );
+
+    const userAgent = this.robotsTxt.getBestMatchingUserAgent(
+      robotsTxt,
+      'DiscjaktBot',
+    );
+
+    return this.prisma.retailer.update({
+      where: {
+        slug,
+      },
+      data: {
+        crawl_delay: userAgent?.crawlDelay ?? 1,
+        allowed: userAgent?.allow.join(';') ?? '',
+        disallowed: userAgent?.disallow.join(';') ?? '',
+      },
+      select: {
+        name: true,
+        slug: true,
+        description: true,
+        image_url: true,
+        website_url: true,
+        crawl_delay: true,
+        allowed: true,
+        disallowed: true,
       },
     });
   }

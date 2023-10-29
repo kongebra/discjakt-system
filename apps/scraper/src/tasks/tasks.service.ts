@@ -21,11 +21,7 @@ export class TasksService {
     @InjectQueue('products') private productsQueue: Queue,
   ) {}
 
-  private normalizeBaseUrl(baseUrl: string): string {
-    return baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-  }
-
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
     try {
       const retailer = await this.fetchRetailer();
@@ -33,6 +29,8 @@ export class TasksService {
         this.logger.debug(`No retailers to update`);
         return;
       }
+
+      this.logger.debug(`Starting cron for ${retailer.slug}`);
 
       const baseUrl = this.normalizeBaseUrl(retailer.website_url);
       const botRules = await this.parseRobotsTxt(baseUrl);
@@ -148,10 +146,15 @@ export class TasksService {
           {
             ...item,
             retailer_slug: retailer.slug,
+            reason: `lastmod differs: ${foundLastmod} !== ${itemLastmod}, new vs old`,
           },
           {
             removeOnComplete: true,
           },
+        );
+      } else {
+        this.logger.debug(
+          `Skipped update on ${item.loc} because lastmod is the same`,
         );
       }
     } catch (error) {
@@ -249,5 +252,9 @@ export class TasksService {
 
     const rule = this.retailerRules.get(slug);
     return rule ? rule(loc, priority) : true;
+  }
+
+  private normalizeBaseUrl(baseUrl: string): string {
+    return baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   }
 }
