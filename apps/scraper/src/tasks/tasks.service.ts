@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
-import { RobotsTxtService } from '../robots-txt/robots-txt.service';
+import { RobotsTxtService, UserAgent } from '../robots-txt/robots-txt.service';
 import {
   SitemapItem,
   SitemapParserService,
@@ -27,75 +27,124 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async handleCron() {
-    const retailer = await this.prisma.retailer.findFirst({
-      orderBy: {
-        updated_at: 'asc',
-      },
-    });
-
-    if (!retailer) {
-      this.logger.debug(`No retailers to update`);
-      return;
-    }
-
-    const baseUrl = this.normalizeBaseUrl(retailer.website_url);
-
-    const robotsTxt = await this.robotsTxtService.fetchAndParse(
-      `${baseUrl}/robots.txt`,
-    );
-    const botRules = this.robotsTxtService.getBestMatchingUserAgent(
-      robotsTxt,
-      'DiscjaktBot',
-    );
-
-    const sitemapItems = await this.sitemapService.fetchAndParse(baseUrl);
-    this.logger.debug(`Found ${sitemapItems.length} sitemap items`);
-
-    const productItems = sitemapItems.filter((item) => {
-      return this.sitemapItemFilter(item, retailer);
-    });
-    this.logger.debug(`Found ${productItems.length} product items`);
-
-    // TODO: Add products on queue
-    const productMap = new Map<string, Product>();
-    const products = await this.prisma.product.findMany({
-      where: {
-        retailer_slug: retailer.slug,
-      },
-    });
-
-    for (const product of products) {
-      productMap.set(product.url, product);
-    }
-
-    for (const item of productItems) {
-      if (
-        botRules &&
-        botRules.disallow.some((disallow) => item.loc.includes(disallow)) // TODO: Improve this
-      ) {
-        continue;
+    try {
+      const retailer = await this.fetchRetailer();
+      if (!retailer) {
+        this.logger.debug(`No retailers to update`);
+        return;
       }
 
-      const found = productMap.get(item.loc);
-      if (found) {
-        const foundLastmod = new Date(found.lastmod).getTime();
-        const itemLastmod = new Date(item.lastmod).getTime();
+      const baseUrl = this.normalizeBaseUrl(retailer.website_url);
+      const botRules = await this.parseRobotsTxt(baseUrl);
+      const productItems = await this.fetchFilteredSitemapItems(
+        baseUrl,
+        retailer,
+      );
 
-        if (foundLastmod !== itemLastmod) {
-          await this.productsQueue.add(
-            'update',
-            {
-              ...item,
-              retailer_slug: retailer.slug,
-            },
-            {
-              removeOnComplete: true,
-            },
-          );
+      await this.updateProductQueue(productItems, retailer, botRules);
+      await this.updateRetailerTimestamp(retailer);
+    } catch (error) {
+      this.logger.error(`Error in handleCron: ${error.message}`);
+    }
+  }
+
+  private async fetchRetailer(): Promise<Retailer | null> {
+    try {
+      return this.prisma.retailer.findFirst({
+        orderBy: {
+          updated_at: 'asc',
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Error fetching retailer: ${error.message}`);
+      return null;
+    }
+  }
+
+  private async parseRobotsTxt(baseUrl: string): Promise<UserAgent | null> {
+    try {
+      const robotsTxt = await this.robotsTxtService.fetchAndParse(
+        `${baseUrl}/robots.txt`,
+      );
+      return this.robotsTxtService.getBestMatchingUserAgent(
+        robotsTxt,
+        'DiscjaktBot',
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error fetching and parsing robots.txt: ${error.message}`,
+      );
+      return null;
+    }
+  }
+
+  private async fetchFilteredSitemapItems(
+    baseUrl: string,
+    retailer: Retailer,
+  ): Promise<SitemapItem[]> {
+    try {
+      const sitemapItems = await this.sitemapService.fetchAndParse(baseUrl);
+      return sitemapItems.filter((item) =>
+        this.sitemapItemFilter(item, retailer),
+      );
+    } catch (error) {
+      this.logger.error(`Error fetching and parsing sitemap: ${error.message}`);
+      return [];
+    }
+  }
+
+  private async updateProductQueue(
+    productItems: SitemapItem[],
+    retailer: Retailer,
+    botRules: UserAgent | null,
+  ) {
+    try {
+      const productMap = await this.getProductMap(retailer);
+
+      for (const item of productItems) {
+        if (this.shouldSkipItemBasedOnBotRules(item, botRules)) {
+          continue;
         }
-      } else {
+
+        const existingProduct = productMap.get(item.loc);
+        if (existingProduct) {
+          await this.updateProduct(item, existingProduct, retailer);
+        } else {
+          await this.createProduct(item, retailer);
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Error updating product queue: ${error.message}`);
+    }
+  }
+
+  private shouldSkipItemBasedOnBotRules(
+    item: SitemapItem,
+    botRules: UserAgent | null,
+  ): boolean {
+    // Early exit if botRules is null
+    if (!botRules) {
+      return false;
+    }
+
+    // Check if any disallowed paths are part of the item's location
+    return (botRules.disallow ?? []).some((disallow) =>
+      item.loc.includes(disallow),
+    );
+  }
+
+  private async updateProduct(
+    item: SitemapItem,
+    existingProduct: Product,
+    retailer: Retailer,
+  ) {
+    try {
+      const foundLastmod = new Date(existingProduct.lastmod).getTime();
+      const itemLastmod = new Date(item.lastmod).getTime();
+
+      if (foundLastmod !== itemLastmod) {
         await this.productsQueue.add(
-          'create',
+          'update',
           {
             ...item,
             retailer_slug: retailer.slug,
@@ -105,18 +154,90 @@ export class TasksService {
           },
         );
       }
+    } catch (error) {
+      this.logger.error(
+        `Error updating product for retailer ${retailer.slug} and product ${item.loc}: ${error.message}`,
+      );
     }
-
-    this.logger.debug(`Updating retailer '${retailer.slug}'`);
-    await this.prisma.retailer.update({
-      where: {
-        slug: retailer.slug,
-      },
-      data: {
-        updated_at: new Date(),
-      },
-    });
   }
+
+  private async createProduct(item: SitemapItem, retailer: Retailer) {
+    try {
+      await this.productsQueue.add(
+        'create',
+        {
+          ...item,
+          retailer_slug: retailer.slug,
+        },
+        {
+          removeOnComplete: true,
+        },
+      );
+    } catch (error) {
+      this.logger.error(`Error creating product: ${error.message}`);
+    }
+  }
+
+  private async getProductMap(
+    retailer: Retailer,
+  ): Promise<Map<string, Product>> {
+    try {
+      const productMap = new Map<string, Product>();
+      const products = await this.prisma.product.findMany({
+        where: {
+          retailer_slug: retailer.slug,
+        },
+      });
+
+      for (const product of products) {
+        productMap.set(product.url, product);
+      }
+
+      return productMap;
+    } catch (error) {
+      this.logger.error(`Error fetching products: ${error.message}`);
+      return new Map<string, Product>();
+    }
+  }
+
+  private async updateRetailerTimestamp(retailer: Retailer): Promise<Retailer> {
+    try {
+      return await this.prisma.retailer.update({
+        where: { slug: retailer.slug },
+        data: { updated_at: new Date() },
+      });
+    } catch (error) {
+      this.logger.error(`Error updating retailer timestamp: ${error.message}`);
+      return retailer;
+    }
+  }
+
+  private readonly retailerRules = new Map<
+    string,
+    (loc: string, priority: string) => boolean
+  >([
+    ['aceshop', (loc) => loc.includes('/products/')],
+    ['frisbeebutikken', (loc) => loc.includes('/products/')],
+    ['discsjappa', (loc) => loc.includes('/products/')],
+    ['disc-golf-dynasty', (loc) => loc.includes('/products/')],
+    ['krokholdgs', (loc) => loc.includes('/products/')],
+    ['golfdiscer', (loc) => loc.includes('/products/')],
+    ['sendeskive', (loc) => loc.includes('/products/')],
+    ['discover-discs', (loc) => loc.includes('/products/')],
+    ['disc-sor', (loc) => loc.includes('/products/')],
+    ['kastmeg', (loc) => loc.includes('/products/')],
+    ['prodisc', (loc) => loc.includes('/produkt/')],
+    ['wearediscgolf', (loc) => loc.includes('/produkt/')],
+    ['firsbeesor', (loc) => loc.includes('/produkt/')],
+    ['discshopen', (loc) => loc.includes('/produkt/')],
+    ['dgshop', (_, priority) => priority === '1.0'],
+    ['discgolf-wheelie', (loc) => loc.includes('/butikkkatalog/')],
+    ['spinnvilldg', (loc) => loc.includes('/product-page/')],
+    [
+      'golfkongen',
+      (loc, priority) => loc.includes('/discgolf/') && priority === '0.5',
+    ],
+  ]);
 
   private sitemapItemFilter(
     { loc, priority }: SitemapItem,
@@ -126,34 +247,7 @@ export class TasksService {
       return false;
     }
 
-    switch (slug) {
-      case 'aceshop':
-      case 'frisbeebutikken':
-      case 'discsjappa':
-      case 'disc-golf-dynasty':
-      case 'krokholdgs':
-      case 'golfdiscer':
-      case 'sendeskive':
-      case 'discover-discs':
-      case 'discsjappa':
-      case 'disc-sor':
-      case 'kastmeg':
-        return loc.includes('/products/');
-      case 'prodisc':
-      case 'wearediscgolf':
-      case 'firsbeesor':
-      case 'discshopen':
-        return loc.includes('/produkt/');
-      case 'dgshop':
-        return priority === '1.0';
-      case 'discgolf-wheelie':
-        return loc.includes('/butikkkatalog/');
-      case 'spinnvilldg':
-        return loc.includes('/product-page/');
-      case 'golfkongen':
-        return loc.includes('/discgolf/') && priority === '0.5';
-      default:
-        return true;
-    }
+    const rule = this.retailerRules.get(slug);
+    return rule ? rule(loc, priority) : true;
   }
 }

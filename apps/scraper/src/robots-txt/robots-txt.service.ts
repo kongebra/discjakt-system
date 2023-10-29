@@ -1,14 +1,16 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
+export type UserAgent = {
+  name: string;
+  allow?: string[];
+  disallow?: string[];
+  crawlDelay?: number;
+  sitemap?: string;
+};
+
 export type RobotsTxt = {
-  userAgents: {
-    name: string;
-    allow?: string[];
-    disallow?: string[];
-    crawlDelay?: number;
-    sitemap?: string;
-  }[];
+  userAgents: UserAgent[];
 
   sitemap?: string;
 };
@@ -81,7 +83,7 @@ export class RobotsTxtService {
   public getBestMatchingUserAgent(
     robotsTxt: RobotsTxt,
     userAgentName: string,
-  ): any | null {
+  ): UserAgent | null {
     const userAgent = robotsTxt.userAgents.find(
       (ua) => ua.name === userAgentName,
     );
