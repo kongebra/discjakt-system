@@ -90,9 +90,11 @@ model Retailer {
     image_url   String?
     website_url String
 
-    crawl_delay Int?
-    disallowed  String?
-    allowed     String?
+    crawl_delay           Int?
+    disallowed            String?
+    allowed               String?
+    current_sitemap_items Int     @default(0)
+    pause_crawl           Boolean @default(false)
 
     products Product[]
 }

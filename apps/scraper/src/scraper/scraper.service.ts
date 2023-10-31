@@ -122,17 +122,11 @@ export class ScraperService {
 
       if (isMetadata) {
         value = $(selector).attr('content');
-        // if (type === 'price') {
-        //   console.log({ selector, value });
-        // }
       } else {
         switch (type) {
           case 'text':
           case 'price':
             value = $(selector).text().trim();
-            // if (type === 'price') {
-            //   console.log({ selector, value });
-            // }
             break;
           case 'src':
             value = $(selector).attr('src');

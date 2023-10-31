@@ -19,106 +19,136 @@ export class TaskProcessor {
     private readonly scraper: ScraperService,
   ) {}
 
-  @Process('create')
+  @Process({
+    name: 'create',
+    concurrency: 4,
+  })
   async create(job: Job<ProductJob>) {
-    const data = await this.scraper.scrape(job.data.loc);
+    try {
+      const data = await this.scraper.scrape(job.data.loc);
 
-    if (!data) {
-      this.logger.error(`Error scraping ${job.data.loc}`);
+      if (!data) {
+        this.logger.error(`Error scraping ${job.data.loc}`);
+        return {};
+      }
+
+      if (!data.title) {
+        this.logger.warn(`No title found for ${job.data.loc}`);
+
+        return {};
+      }
+
+      await this.prisma.product.create({
+        data: {
+          name: data.title,
+          description: data.description,
+          url: job.data.loc,
+          image_url: data.image_url,
+
+          meta_title: data.title,
+          meta_description: data.description,
+
+          lastmod: job.data.lastmod,
+          priority: job.data.priority,
+
+          retailer: {
+            connect: {
+              slug: job.data.retailer_slug,
+            },
+          },
+
+          price_history: {
+            create: {
+              current_price: data.price || 0,
+              original_price: data.price || 0,
+              in_stock: false, // TODO: We need to implement this in our scraper
+              is_promotion: false, // TODO: We need to implement this in our scraper
+            },
+          },
+        },
+      });
+
       return {};
+    } catch (error) {
+      this.logger.error(`Error creating product: ${error.message}`);
+
+      if (
+        error.message.includes(
+          'Unique constraint failed on the fields: (`url`)',
+        )
+      ) {
+        this.logger.error(`Product already exists ${job.data.loc}`);
+      }
     }
-
-    const product = await this.prisma.product.create({
-      data: {
-        name: data.title,
-        description: data.description,
-        url: job.data.loc,
-        image_url: data.image_url,
-
-        meta_title: data.title,
-        meta_description: data.description,
-
-        priority: job.data.priority,
-
-        retailer: {
-          connect: {
-            slug: job.data.retailer_slug,
-          },
-        },
-
-        price_history: {
-          create: {
-            current_price: data.price,
-            original_price: data.price,
-            in_stock: false, // TODO: We need to implement this in our scraper
-            is_promotion: false, // TODO: We need to implement this in our scraper
-          },
-        },
-      },
-    });
-
-    this.logger.debug(`Created product ${product.name}`);
-
-    return {};
   }
 
-  @Process('update')
+  @Process({
+    name: 'update',
+    concurrency: 2,
+  })
   async update(job: Job<ProductJob>) {
-    const product = await this.prisma.product.findUnique({
-      where: {
-        url: job.data.loc,
-      },
-      include: {
-        price_history: {
-          orderBy: {
-            created_at: 'desc',
-          },
-          take: 1,
+    try {
+      const product = await this.prisma.product.findUnique({
+        where: {
+          url: job.data.loc,
         },
-      },
-    });
-
-    if (!product) {
-      this.logger.error(`Product not found ${job.data.loc}`);
-      return {};
-    }
-
-    const data = await this.scraper.scrape(job.data.loc);
-
-    if (!data) {
-      this.logger.error(`Error scraping ${job.data.loc}`);
-      return {};
-    }
-
-    await this.prisma.product.update({
-      where: {
-        url: job.data.loc,
-      },
-      data: {
-        name: data.title,
-        description: data.description,
-        image_url: data.image_url,
-
-        meta_title: data.title,
-        meta_description: data.description,
-
-        priority: job.data.priority,
-
-        price_history: {
-          create: {
-            current_price: data.price,
-            original_price: data.price,
-            in_stock: false, // TODO: We need to implement this in our scraper
-            is_promotion: false, // TODO: We need to implement this in our scraper
+        include: {
+          price_history: {
+            orderBy: {
+              created_at: 'desc',
+            },
+            take: 1,
           },
         },
-      },
-    });
+      });
 
-    this.logger.debug(
-      `Updated product ${product.name} (Reason: ${job.data.reason || 'none'})`,
-    );
+      if (!product) {
+        this.logger.error(`Product not found ${job.data.loc}`);
+        return {};
+      }
 
-    return {};
+      const data = await this.scraper.scrape(job.data.loc);
+
+      if (!data) {
+        this.logger.error(`Error scraping ${job.data.loc}`);
+        return {};
+      }
+
+      await this.prisma.product.update({
+        where: {
+          url: job.data.loc,
+        },
+        data: {
+          name: data.title,
+          description: data.description,
+          image_url: data.image_url,
+
+          meta_title: data.title,
+          meta_description: data.description,
+
+          lastmod: job.data.lastmod,
+          priority: job.data.priority,
+
+          price_history: {
+            create: {
+              current_price: data.price || 0,
+              original_price: data.price || 0,
+              in_stock: false, // TODO: We need to implement this in our scraper
+              is_promotion: false, // TODO: We need to implement this in our scraper
+            },
+          },
+        },
+      });
+
+      // this.logger.debug(
+      //   `Updated product ${product.name} (Reason: ${
+      //     job.data.reason || 'none'
+      //   })`,
+      // );
+
+      return {};
+    } catch (error) {
+      this.logger.error(`Error updating product: ${error.message}`);
+    }
   }
 }

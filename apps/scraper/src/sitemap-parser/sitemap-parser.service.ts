@@ -36,7 +36,9 @@ export class SitemapParserService {
       const xml = await this.fetchXml(`${normalizedBaseUrl}/sitemap.xml`);
       return this.parse(xml, normalizedBaseUrl);
     } catch (error) {
-      this.logger.error(`Failed to fetch and parse sitemap: ${error.message}`);
+      this.logger.error(
+        `Failed to fetch and parse sitemap (${baseUrl}): ${error.message}`,
+      );
       return [];
     }
   }

@@ -4,11 +4,15 @@ import { PrismaService } from '../prisma/prisma.service';
 
 export type PaginatedResponse<T> = {
   data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  nextPage: string | null;
-  prevPage: string | null;
+  pagination: {
+    total: number;
+    page: number;
+    pageSize: number;
+  };
+  links: {
+    nextPage: string | null;
+    prevPage: string | null;
+  };
 };
 
 const productSelect = {
@@ -17,6 +21,7 @@ const productSelect = {
   image_url: true,
   retailer_slug: true,
   category: true,
+  lastmod: true,
 } satisfies Prisma.ProductSelect;
 
 type ProductDto = Prisma.ProductGetPayload<{ select: typeof productSelect }>;
@@ -43,17 +48,43 @@ export class ProductsController {
 
     const response: PaginatedResponse<ProductDto> = {
       data,
-      total,
-      page,
-      pageSize,
-      nextPage:
-        page > 1 ? `/products?page=${page - 1}&pageSize=${pageSize}` : null,
-      prevPage:
-        page * pageSize < total
-          ? `/products?page=${page + 1}&pageSize=${pageSize}`
-          : null,
+      pagination: {
+        total,
+        page,
+        pageSize,
+      },
+      links: {
+        nextPage:
+          page > 1 ? `/products?page=${page - 1}&pageSize=${pageSize}` : null,
+        prevPage:
+          page * pageSize < total
+            ? `/products?page=${page + 1}&pageSize=${pageSize}`
+            : null,
+      },
     };
 
     return response;
+  }
+
+  @Get('debug')
+  async debug() {
+    const [products, totalCount] = await Promise.all([
+      await this.prisma.product.findMany({
+        where: {
+          lastmod: {
+            equals: null,
+          },
+        },
+      }),
+      await this.prisma.product.count({
+        where: {
+          lastmod: {
+            equals: null,
+          },
+        },
+      }),
+    ]);
+
+    return { totalCount, products };
   }
 }

@@ -1,14 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Product, Retailer } from 'database';
+import { QueueService } from 'src/queue/queue.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RobotsTxtService, UserAgent } from '../robots-txt/robots-txt.service';
 import {
   SitemapItem,
   SitemapParserService,
 } from '../sitemap-parser/sitemap-parser.service';
-import { Product, Retailer } from 'database';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
 
 @Injectable()
 export class TasksService {
@@ -18,10 +17,32 @@ export class TasksService {
     private readonly prisma: PrismaService,
     private readonly robotsTxtService: RobotsTxtService,
     private readonly sitemapService: SitemapParserService,
-    @InjectQueue('products') private productsQueue: Queue,
+    private readonly queueService: QueueService,
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  public async doRetailer(retailer: Retailer) {
+    this.logger.debug(`Starting cron for ${retailer.slug}`);
+
+    const baseUrl = this.normalizeBaseUrl(retailer.website_url);
+    const botRules = await this.parseRobotsTxt(baseUrl);
+    const productItems = await this.fetchFilteredSitemapItems(
+      baseUrl,
+      retailer,
+    );
+
+    this.logger.debug(
+      `Found ${productItems.length} products for ${retailer.slug}`,
+    );
+
+    if (productItems.length === 0) {
+      this.logger.warn(`No products found for ${retailer.slug}`);
+    }
+
+    await this.updateRetailerTimestamp(retailer, productItems.length);
+    await this.updateProductQueue(productItems, retailer, botRules);
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
     try {
       const retailer = await this.fetchRetailer();
@@ -30,17 +51,7 @@ export class TasksService {
         return;
       }
 
-      this.logger.debug(`Starting cron for ${retailer.slug}`);
-
-      const baseUrl = this.normalizeBaseUrl(retailer.website_url);
-      const botRules = await this.parseRobotsTxt(baseUrl);
-      const productItems = await this.fetchFilteredSitemapItems(
-        baseUrl,
-        retailer,
-      );
-
-      await this.updateProductQueue(productItems, retailer, botRules);
-      await this.updateRetailerTimestamp(retailer);
+      await this.doRetailer(retailer);
     } catch (error) {
       this.logger.error(`Error in handleCron: ${error.message}`);
     }
@@ -99,18 +110,20 @@ export class TasksService {
     try {
       const productMap = await this.getProductMap(retailer);
 
-      for (const item of productItems) {
-        if (this.shouldSkipItemBasedOnBotRules(item, botRules)) {
-          continue;
-        }
+      await Promise.all(
+        productItems.map((item) => {
+          if (this.shouldSkipItemBasedOnBotRules(item, botRules)) {
+            return null;
+          }
 
-        const existingProduct = productMap.get(item.loc);
-        if (existingProduct) {
-          await this.updateProduct(item, existingProduct, retailer);
-        } else {
-          await this.createProduct(item, retailer);
-        }
-      }
+          const existingProduct = productMap.get(item.loc);
+          if (existingProduct) {
+            return this.updateProduct(item, existingProduct, retailer);
+          }
+
+          return this.createProduct(item, retailer);
+        }),
+      );
     } catch (error) {
       this.logger.error(`Error updating product queue: ${error.message}`);
     }
@@ -126,9 +139,18 @@ export class TasksService {
     }
 
     // Check if any disallowed paths are part of the item's location
-    return (botRules.disallow ?? []).some((disallow) =>
+    const skip = (botRules.disallow ?? []).some((disallow) =>
       item.loc.includes(disallow),
     );
+
+    if (skip) {
+      this.logger.debug(
+        `Skipping ${item.loc} because it matches a disallowed path`,
+        botRules,
+      );
+    }
+
+    return skip;
   }
 
   private async updateProduct(
@@ -141,22 +163,27 @@ export class TasksService {
       const itemLastmod = new Date(item.lastmod).getTime();
 
       if (foundLastmod !== itemLastmod) {
-        await this.productsQueue.add(
+        return await this.queueService.add(
           'update',
-          {
-            ...item,
-            retailer_slug: retailer.slug,
-            reason: `lastmod differs: ${foundLastmod} !== ${itemLastmod}, new vs old`,
-          },
-          {
-            removeOnComplete: true,
-          },
-        );
-      } else {
-        this.logger.debug(
-          `Skipped update on ${item.loc} because lastmod is the same`,
+          item,
+          retailer,
+          `lastmod differs: ${foundLastmod} !== ${itemLastmod}`,
         );
       }
+
+      // TODO: Move this to a nightly cron job
+      // const sameDate = this.checkIfSameDate(
+      //   new Date(existingProduct.updated_at),
+      //   new Date(),
+      // );
+      // if (!sameDate) {
+      //   return await this.queueService.add(
+      //     'update',
+      //     item,
+      //     retailer,
+      //     `updated_at is not same date: ${existingProduct.updated_at}`,
+      //   );
+      // }
     } catch (error) {
       this.logger.error(
         `Error updating product for retailer ${retailer.slug} and product ${item.loc}: ${error.message}`,
@@ -164,18 +191,20 @@ export class TasksService {
     }
   }
 
+  private checkIfSameDate(a: Date, b: Date): boolean {
+    const [aYear, aMonth, aDay] = [a.getFullYear(), a.getMonth(), a.getDate()];
+    const [bYear, bMonth, bDay] = [b.getFullYear(), b.getMonth(), b.getDate()];
+
+    if (aYear === bYear && aMonth === bMonth && aDay === bDay) {
+      return true;
+    }
+
+    return false;
+  }
+
   private async createProduct(item: SitemapItem, retailer: Retailer) {
     try {
-      await this.productsQueue.add(
-        'create',
-        {
-          ...item,
-          retailer_slug: retailer.slug,
-        },
-        {
-          removeOnComplete: true,
-        },
-      );
+      return await this.queueService.add('create', item, retailer);
     } catch (error) {
       this.logger.error(`Error creating product: ${error.message}`);
     }
@@ -203,7 +232,11 @@ export class TasksService {
     }
   }
 
-  private async updateRetailerTimestamp(retailer: Retailer): Promise<Retailer> {
+  private async updateRetailerTimestamp(
+    retailer: Retailer,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sitemapItemsCount: number,
+  ): Promise<Retailer> {
     try {
       return await this.prisma.retailer.update({
         where: { slug: retailer.slug },
@@ -228,14 +261,15 @@ export class TasksService {
     ['sendeskive', (loc) => loc.includes('/products/')],
     ['discover-discs', (loc) => loc.includes('/products/')],
     ['disc-sor', (loc) => loc.includes('/products/')],
-    ['kastmeg', (loc) => loc.includes('/products/')],
-    ['prodisc', (loc) => loc.includes('/produkt/')],
-    ['wearediscgolf', (loc) => loc.includes('/produkt/')],
-    ['firsbeesor', (loc) => loc.includes('/produkt/')],
+    ['disc-sr', (loc) => loc.includes('/products/')],
+    ['kast-meg', (loc) => loc.includes('/products/')],
+    ['prodisc', (loc) => loc.includes('/products/')],
+    ['we-are-disc-golf', (loc) => loc.includes('/produkt/')],
+    ['frisbee-sr', (loc) => loc.includes('/produkt/')],
     ['discshopen', (loc) => loc.includes('/produkt/')],
     ['dgshop', (_, priority) => priority === '1.0'],
     ['discgolf-wheelie', (loc) => loc.includes('/butikkkatalog/')],
-    ['spinnvilldg', (loc) => loc.includes('/product-page/')],
+    ['spinnvill-discgolf', (loc) => loc.includes('/product-page/')],
     [
       'golfkongen',
       (loc, priority) => loc.includes('/discgolf/') && priority === '0.5',

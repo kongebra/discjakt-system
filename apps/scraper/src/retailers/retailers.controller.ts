@@ -8,10 +8,14 @@ import {
   Put,
 } from '@nestjs/common';
 import { RetailerCreateDto, RetailersService } from './retailers.service';
+import { TasksService } from 'src/tasks/tasks.service';
 
 @Controller('retailers')
 export class RetailersController {
-  constructor(private readonly service: RetailersService) {}
+  constructor(
+    private readonly service: RetailersService,
+    private readonly tasksService: TasksService,
+  ) {}
 
   @Get()
   public async getRetailers() {
@@ -28,6 +32,22 @@ export class RetailersController {
         description: `retailer with slug '${slug}' doesn't exist`,
       });
     }
+
+    return retailer;
+  }
+
+  @Post(':slug/crawl')
+  async crawlBySlug(@Param('slug') slug: string) {
+    const retailer = await this.service.getRetailerDetailer(slug);
+
+    if (!retailer) {
+      throw new NotFoundException('retailer not found', {
+        cause: new Error(),
+        description: `retailer with slug '${slug}' doesn't exist`,
+      });
+    }
+
+    await this.tasksService.doRetailer(retailer);
 
     return retailer;
   }

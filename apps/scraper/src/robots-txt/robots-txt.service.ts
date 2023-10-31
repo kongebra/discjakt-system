@@ -23,8 +23,8 @@ export class RobotsTxtService {
 
   public parse(input: string): RobotsTxt | null {
     const lines = input.split('\n');
-    const userAgents: any[] = [];
-    let currentUserAgent: any = null;
+    const userAgents: UserAgent[] = [];
+    let currentUserAgent: UserAgent = null;
     let sitemap: string | null = null;
 
     for (const line of lines) {
@@ -60,6 +60,8 @@ export class RobotsTxtService {
     if (currentUserAgent) {
       userAgents.push(currentUserAgent);
     }
+
+    currentUserAgent.disallow = currentUserAgent.disallow.filter((x) => x);
 
     return { userAgents, sitemap };
   }

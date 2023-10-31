@@ -1,4 +1,4 @@
-import { Controller, Delete } from '@nestjs/common';
+import { Controller, Delete, Get } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 
@@ -9,7 +9,15 @@ export class QueueController {
   @Delete('clear')
   async clearQueue() {
     await this.productsQueue.empty(); // This will empty the queue but keep the jobs in the 'completed' state
-    await this.productsQueue.clean(0); // This will remove all jobs from the 'completed' state
+    await this.productsQueue.clean(0);
+    await this.productsQueue.clean(0, 'failed');
     return { message: 'Queue cleared successfully' };
+  }
+
+  @Get('stats')
+  async stats() {
+    const [jobCounts] = await Promise.all([this.productsQueue.getJobCounts()]);
+
+    return { jobCounts };
   }
 }

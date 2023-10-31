@@ -23,12 +23,18 @@ export class RetailersService {
       select: {
         name: true,
         slug: true,
-        description: true,
-        image_url: true,
         website_url: true,
         crawl_delay: true,
-        allowed: true,
-        disallowed: true,
+        updated_at: true,
+
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+      orderBy: {
+        updated_at: 'asc',
       },
     });
   }
@@ -45,8 +51,20 @@ export class RetailersService {
         image_url: true,
         website_url: true,
         crawl_delay: true,
-        allowed: true,
-        disallowed: true,
+
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
+  }
+
+  public async getRetailerDetailer(slug: string) {
+    return this.prisma.retailer.findUnique({
+      where: {
+        slug,
       },
     });
   }
@@ -67,7 +85,7 @@ export class RetailersService {
         ...data,
         slug: this.slugify.slugify(data.name),
 
-        crawl_delay: userAgent?.crawlDelay ?? 1000,
+        crawl_delay: userAgent?.crawlDelay ?? 1,
         allowed: userAgent?.allow.join(';') ?? '',
         disallowed: userAgent?.disallow.join(';') ?? '',
       },
