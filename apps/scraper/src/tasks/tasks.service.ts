@@ -20,7 +20,7 @@ export class TasksService {
     private readonly queueService: QueueService,
   ) {}
 
-  public async doRetailer(retailer: Retailer) {
+  public async work(retailer: Retailer) {
     this.logger.debug(`Starting cron for ${retailer.slug}`);
 
     const baseUrl = this.normalizeBaseUrl(retailer.website_url);
@@ -51,7 +51,7 @@ export class TasksService {
         return;
       }
 
-      await this.doRetailer(retailer);
+      await this.work(retailer);
     } catch (error) {
       this.logger.error(`Error in handleCron: ${error.message}`);
     }
@@ -92,6 +92,11 @@ export class TasksService {
     retailer: Retailer,
   ): Promise<SitemapItem[]> {
     try {
+      // Temp: Må finne ut hvordan vi håndterer denne her
+      if (baseUrl.includes('https://discgolf-wheelie.no')) {
+        return [];
+      }
+
       const sitemapItems = await this.sitemapService.fetchAndParse(baseUrl);
       return sitemapItems.filter((item) =>
         this.sitemapItemFilter(item, retailer),
@@ -252,7 +257,10 @@ export class TasksService {
     string,
     (loc: string, priority: string) => boolean
   >([
-    ['aceshop', (loc) => loc.includes('/products/')],
+    [
+      'aceshop',
+      (loc) => loc.includes('/products/') && !loc.includes('/se/products/'),
+    ],
     ['frisbeebutikken', (loc) => loc.includes('/products/')],
     ['discsjappa', (loc) => loc.includes('/products/')],
     ['disc-golf-dynasty', (loc) => loc.includes('/products/')],

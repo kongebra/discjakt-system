@@ -19,9 +19,24 @@ import { TasksService } from './tasks/tasks.service';
 import { TaskProcessor } from './tasks/task.processor';
 import { QueueService } from './queue/queue.service';
 import { QueueController } from './queue/queue.controller';
+import { OpenTelemetryModule } from 'nestjs-otel';
 
 @Module({
   imports: [
+    OpenTelemetryModule.forRoot({
+      metrics: {
+        hostMetrics: true, // Includes Host Metrics
+        apiMetrics: {
+          enable: true, // Includes api metrics
+          defaultAttributes: {
+            // You can set default labels for api metrics
+            custom: 'label',
+          },
+          ignoreRoutes: ['/favicon.ico'], // You can ignore specific routes (See https://docs.nestjs.com/middleware#excluding-routes for options)
+          ignoreUndefinedRoutes: false, //Records metrics for all URLs, even undefined ones
+        },
+      },
+    }),
     BullModule.forRoot({
       redis: {
         host: process.env.REDISHOST,

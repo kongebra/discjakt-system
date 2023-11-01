@@ -47,7 +47,7 @@ export class RetailersController {
       });
     }
 
-    await this.tasksService.doRetailer(retailer);
+    await this.tasksService.work(retailer);
 
     return retailer;
   }
