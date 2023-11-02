@@ -2,7 +2,7 @@ import Section from "@/components/section";
 import { getDiscs, getProducts } from "@/lib/server";
 import { Card, Grid, Metric, Text, Title } from "@tremor/react";
 
-export const revalidate = 60;
+export const revalidate = 5;
 
 export default async function DashboardIndex() {
   const [productsNotSet, productsDiscs, discs] = await Promise.all([

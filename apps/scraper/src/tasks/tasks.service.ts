@@ -42,19 +42,30 @@ export class TasksService {
     await this.updateProductQueue(productItems, retailer, botRules);
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async handleCron() {
     try {
-      const retailer = await this.fetchRetailer();
-      if (!retailer) {
+      const retailers = await this.fetchRetailers();
+      if (retailers.length === 0) {
         this.logger.debug(`No retailers to update`);
         return;
       }
 
-      await this.work(retailer);
+      await Promise.all(retailers.map((retailer) => this.work(retailer)));
+      // const retailer = await this.fetchRetailer();
+      // if (!retailer) {
+      //   this.logger.debug(`No retailers to update`);
+      //   return;
+      // }
+
+      // await this.work(retailer);
     } catch (error) {
       this.logger.error(`Error in handleCron: ${error.message}`);
     }
+  }
+
+  private async fetchRetailers() {
+    return this.prisma.retailer.findMany({});
   }
 
   private async fetchRetailer(): Promise<Retailer | null> {
