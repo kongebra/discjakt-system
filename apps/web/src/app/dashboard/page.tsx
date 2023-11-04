@@ -1,11 +1,20 @@
 import Section from "@/components/section";
-import { getDiscs, getProducts } from "@/lib/server";
-import { Card, Grid, Metric, Text, Title } from "@tremor/react";
+import StatCard from "@/components/stat-card";
+import Text from "@/components/text";
+import Title from "@/components/title";
+import { getDiscs, getManufacturers, getProducts } from "@/lib/server";
+import {
+  DocumentIcon,
+  FingerPrintIcon,
+  FireIcon,
+  TagIcon,
+} from "@heroicons/react/24/outline";
 
 export const revalidate = 5;
 
 export default async function DashboardIndex() {
-  const [productsNotSet, productsDiscs, discs] = await Promise.all([
+  const [products, productsNotSet, discs, manufacturers] = await Promise.all([
+    getProducts(),
     getProducts({
       where: {
         category: {
@@ -13,38 +22,34 @@ export default async function DashboardIndex() {
         },
       },
     }),
-    getProducts({
-      where: {
-        category: {
-          equals: "DISC",
-        },
-      },
-    }),
     getDiscs(),
+    getManufacturers(),
   ]);
 
   return (
     <>
       <Section>
         <Title>Dashboard</Title>
-        <Text>Lorem ipsum dolor sit amet</Text>
+        <Text className="mb-8">Lorem ipsum dolor sit amet</Text>
 
-        <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
-          <Card decoration="top" decorationColor="amber">
-            <Text>Products (NOT_SET)</Text>
-            <Metric>{productsNotSet.length.toLocaleString()}</Metric>
-          </Card>
-
-          <Card decoration="top" decorationColor="green">
-            <Text>Products (DISC)</Text>
-            <Metric>{productsDiscs.length.toLocaleString()}</Metric>
-          </Card>
-
-          <Card decoration="top" decorationColor="teal">
-            <Text>Discs</Text>
-            <Metric>{discs.length.toLocaleString()}</Metric>
-          </Card>
-        </Grid>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title="Products"
+            value={products.length.toLocaleString()}
+            icon={<TagIcon className="h-4 w-4 text-muted-foreground" />}
+            description={`${productsNotSet.length.toLocaleString()} NOT_SET`}
+          />
+          <StatCard
+            title="Discs"
+            value={discs.length.toLocaleString()}
+            icon={<FireIcon className="h-4 w-4 text-muted-foreground" />}
+          />
+          <StatCard
+            title="Manufacturers"
+            value={manufacturers.length.toLocaleString()}
+            icon={<FingerPrintIcon className="h-4 w-4 text-muted-foreground" />}
+          />
+        </div>
       </Section>
     </>
   );

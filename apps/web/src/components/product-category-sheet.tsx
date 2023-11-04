@@ -1,4 +1,3 @@
-import { Button } from "@tremor/react";
 import { Product, prisma } from "database";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
@@ -13,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import { Button } from "./ui/button";
 
 type Props = {
   product: Product;

@@ -7,40 +7,45 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Button } from "@tremor/react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { object, string, number, date, InferType } from "yup";
 import { Manufacturer } from "database";
 import { createManufacturer } from "@/lib/server";
 import { revalidatePath } from "next/cache";
-
+import { Button } from "./ui/button";
+import { z } from "zod";
 // name: string;
 // slug: string;
 // description: string | null;
 // image_url: string | null;
 
-const schema = object({
-  name: string().required(),
-  slug: string().required(),
-  description: string().nullable(),
-  image_url: string().nullable(),
+// const schema = object({
+//   name: string().required(),
+//   slug: string().required(),
+//   description: string().nullable(),
+//   image_url: string().nullable(),
+// });
+const schema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  image_url: z.string().nullable(),
 });
 
 const CreateManufacturerSheet = () => {
   async function handleSubmit(formData: FormData) {
     "use server";
 
-    const manufacturer = await schema.validate({
-      name: formData.get("name"),
-      slug: formData.get("slug"),
-      description: formData.get("description"),
-      image_url: formData.get("image_url"),
-    });
+    // const manufacturer = await schema.validate({
+    //   name: formData.get("name"),
+    //   slug: formData.get("slug"),
+    //   description: formData.get("description"),
+    //   image_url: formData.get("image_url"),
+    // });
 
-    await createManufacturer(manufacturer);
+    // await createManufacturer(manufacturer);
 
-    revalidatePath("/");
+    // revalidatePath("/");
   }
 
   return (

@@ -1,4 +1,3 @@
-import CreateManufacturerSheet from "@/components/create-manufacturer-sheet";
 import Section from "@/components/section";
 import Title from "@/components/title";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -10,21 +9,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ManufacturerSheet } from "@/features/manufacturer";
-import { getManufacturers } from "@/lib/server";
-import { Manufacturer } from "database";
+import { DiscSheet } from "@/features/discs";
+import { getDiscs, getManufacturers } from "@/lib/server";
+import { Disc, Manufacturer } from "database";
 import Image from "next/image";
-import React from "react";
 
-export default async function Manufacturers() {
-  const [manufacturers] = await Promise.all([
-    getManufacturers({
+export default async function Discs() {
+  const [discs, manufactuerers] = await Promise.all([
+    getDiscs({
       include: {
+        manufacturer: true,
         _count: {
-          select: { discs: true },
+          select: { Product: true },
         },
       },
-    }) as Promise<(Manufacturer & { _count: { discs: number } })[]>,
+    }) as Promise<
+      (Disc & {
+        manufacturer: Manufacturer;
+        _count: { Product: number };
+      })[]
+    >,
+    getManufacturers(),
   ]);
 
   return (
@@ -33,9 +38,9 @@ export default async function Manufacturers() {
         <Card>
           <CardHeader>
             <div className="flex justify-between">
-              <Title>Data - Produsenter</Title>
+              <Title>Data - Discs</Title>
 
-              <ManufacturerSheet />
+              <DiscSheet manufactuerers={manufactuerers} />
             </div>
           </CardHeader>
 
@@ -51,30 +56,31 @@ export default async function Manufacturers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {manufacturers
+                {discs
                   .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((manufacturer) => (
-                    <TableRow key={manufacturer.slug}>
+                  .map((disc) => (
+                    <TableRow key={disc.slug}>
                       <TableCell>
-                        {!!manufacturer.image_url && (
+                        {!!disc.image_url && (
                           <Image
                             unoptimized
-                            src={manufacturer.image_url}
-                            alt={manufacturer.name}
+                            src={disc.image_url}
+                            alt={disc.name}
                             width={64}
                             height={64}
                             className="rounded"
                           />
                         )}
                       </TableCell>
-                      <TableCell>{manufacturer.name}</TableCell>
-                      <TableCell>{manufacturer.slug}</TableCell>
-                      <TableCell>{manufacturer._count.discs}</TableCell>
+                      <TableCell>{disc.name}</TableCell>
+                      <TableCell>{disc.slug}</TableCell>
+                      <TableCell>{disc._count.Product}</TableCell>
                       <TableCell>
-                        <ManufacturerSheet
+                        <DiscSheet
+                          manufactuerers={manufactuerers}
                           buttonVariant="secondary"
                           variant="update"
-                          manufacturer={manufacturer}
+                          disc={disc}
                         />
                       </TableCell>
                     </TableRow>
