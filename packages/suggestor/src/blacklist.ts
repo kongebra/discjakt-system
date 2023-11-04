@@ -62,4 +62,5 @@ export const blacklist = [
   "active premium",
   "jawbreaker",
   "titanium",
+  "lucid",
 ].map((w) => w.toLowerCase());

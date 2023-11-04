@@ -217,6 +217,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    step={0.5}
                     autoComplete={"off"}
                     placeholder="Speed"
                     {...field}
@@ -242,6 +243,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    step={0.5}
                     autoComplete={"off"}
                     placeholder="Glide"
                     {...field}
@@ -267,6 +269,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    step={0.5}
                     autoComplete={"off"}
                     placeholder="Turn"
                     {...field}
@@ -292,6 +295,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    step={0.5}
                     autoComplete={"off"}
                     placeholder="Fade"
                     {...field}

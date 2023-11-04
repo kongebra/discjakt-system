@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DiscSheet } from "@/features/discs";
+import { DiscSuggestionButton } from "@/features/products";
 import { slugify } from "@/lib";
 import { getDiscs, getManufacturers, getProducts } from "@/lib/server";
 import Image from "next/image";
@@ -77,9 +78,11 @@ export default async function TasksProductsCategorize() {
                     <TableCell>{product.name}</TableCell>
                     <TableCell>
                       {suggestions.map((disc) => (
-                        <Button key={`${product.id}_${disc.id}`} type="button">
-                          {disc.name}
-                        </Button>
+                        <DiscSuggestionButton
+                          key={`${product.id}_${disc.id}`}
+                          product={product}
+                          disc={disc}
+                        />
                       ))}
                     </TableCell>
                     <TableCell>

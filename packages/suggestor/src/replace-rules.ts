@@ -7,6 +7,11 @@ export const replaceRules: [string[], string][] = [
 
   // Kastaplast
   [["kaxe z"], "kaxe-z"],
+  [["grym x"], "grym-x"],
+
+  // Latitude 64
+  [["ballista pro"], "ballista-pro"],
+  [["saint pro"], "saint-pro"],
 
   // Nordic characters
   [["ø", "ö"], "o"],
