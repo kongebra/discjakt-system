@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { slugify } from "@/lib";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useFormStatus } from "react-dom";
 
 type Props = {
   manufacturers: Manufacturer[];
@@ -38,8 +39,9 @@ const DiscForm: React.FC<Props> = ({
   manufacturers,
   onSubmit,
   defaultValues,
-  loading,
 }) => {
+  const { pending: loading } = useFormStatus();
+
   const form = useForm<DiscFields>({
     resolver: zodResolver(discSchema),
     defaultValues: {
@@ -48,20 +50,35 @@ const DiscForm: React.FC<Props> = ({
       description: defaultValues?.description ?? "",
       image_url: defaultValues?.image_url ?? "",
 
-      speed: defaultValues?.speed,
-      glide: defaultValues?.glide,
-      turn: defaultValues?.turn,
-      fade: defaultValues?.fade,
+      speed: defaultValues?.speed ?? 0,
+      glide: defaultValues?.glide ?? 0,
+      turn: defaultValues?.turn ?? 0,
+      fade: defaultValues?.fade ?? 0,
 
-      type: defaultValues?.type,
+      type: defaultValues?.type ?? "PUTTER",
 
       manufacturer_slug: defaultValues?.manufacturer_slug,
     },
   });
 
+  const handleOnSubmit = form.handleSubmit(async (data) => {
+    const response = await fetch(`/api/database/discs/${data.slug}`);
+    if (response.status === 200) {
+      const existingDisc = await response.json();
+      if (existingDisc.id !== defaultValues?.id) {
+        form.setError("slug", {
+          message: `Slug already exists`,
+        });
+        return;
+      }
+    }
+
+    onSubmit(data);
+  });
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={handleOnSubmit}>
         <FormField
           control={form.control}
           name="name"
@@ -71,6 +88,7 @@ const DiscForm: React.FC<Props> = ({
               <FormControl>
                 <Input
                   placeholder="Name"
+                  autoComplete={"off"}
                   {...field}
                   onChange={(e) => {
                     const value = e.currentTarget.value;
@@ -95,7 +113,12 @@ const DiscForm: React.FC<Props> = ({
             <FormItem>
               <FormLabel>Slug</FormLabel>
               <FormControl>
-                <Input placeholder="Slug" {...field} disabled={loading} />
+                <Input
+                  placeholder="Slug"
+                  autoComplete={"off"}
+                  {...field}
+                  disabled={loading}
+                />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage>{fieldState.error?.message}</FormMessage>
@@ -194,6 +217,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    autoComplete={"off"}
                     placeholder="Speed"
                     {...field}
                     onChange={(e) => {
@@ -218,6 +242,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    autoComplete={"off"}
                     placeholder="Glide"
                     {...field}
                     onChange={(e) => {
@@ -242,6 +267,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    autoComplete={"off"}
                     placeholder="Turn"
                     {...field}
                     onChange={(e) => {
@@ -266,6 +292,7 @@ const DiscForm: React.FC<Props> = ({
                 <FormControl>
                   <Input
                     type="number"
+                    autoComplete={"off"}
                     placeholder="Fade"
                     {...field}
                     onChange={(e) => {

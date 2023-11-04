@@ -1,6 +1,5 @@
 import ProductCategorySheet from "@/components/product-category-sheet";
 import Section from "@/components/section";
-import Title from "@/components/title";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,9 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DiscSheet } from "@/features/discs";
-import { getProductDiscSuggestions, slugify } from "@/lib";
+import { slugify } from "@/lib";
 import { getDiscs, getManufacturers, getProducts } from "@/lib/server";
 import Image from "next/image";
+import { getProductDiscSuggestions } from "suggestor";
 
 export default async function TasksProductsCategorize() {
   const [products, discs, manufacturers] = await Promise.all([
@@ -24,16 +24,21 @@ export default async function TasksProductsCategorize() {
           equals: "NOT_SET",
         },
       },
-      take: 16,
+      take: 64,
     }),
     getDiscs(),
     getManufacturers(),
   ]);
 
+  const discSlugs = discs.map((disc) => disc.slug);
+
   const data = products.map((product) => {
+    const slugs = getProductDiscSuggestions(product.name, discSlugs);
+    const suggestions = discs.filter((disc) => slugs.includes(disc.slug));
+
     return {
       product,
-      suggestions: getProductDiscSuggestions(product, discs),
+      suggestions,
     };
   });
 
@@ -72,15 +77,8 @@ export default async function TasksProductsCategorize() {
                     <TableCell>{product.name}</TableCell>
                     <TableCell>
                       {suggestions.map((disc) => (
-                        <Button
-                          key={`${product.id}_${disc.id}`}
-                          type="button"
-                          formAction={async () => {
-                            "use server";
-                            console.log("foo");
-                          }}
-                        >
-                          {disc.slug.toUpperCase()}
+                        <Button key={`${product.id}_${disc.id}`} type="button">
+                          {disc.name}
                         </Button>
                       ))}
                     </TableCell>

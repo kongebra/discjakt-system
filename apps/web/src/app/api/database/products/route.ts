@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
         equals: category as ProductCategory,
       },
     },
+    take: 32,
   });
 
-  return NextResponse.json(products);
+  return NextResponse.json(products.map((p) => p.name));
 }
