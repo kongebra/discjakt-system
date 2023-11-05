@@ -7,3 +7,7 @@ export async function getProducts(args?: Prisma.ProductFindManyArgs) {
 export async function updateProduct(args: Prisma.ProductUpdateArgs) {
   return prisma.product.update(args);
 }
+
+export async function updateManyProducts(args: Prisma.ProductUpdateManyArgs) {
+  return prisma.product.updateMany(args);
+}

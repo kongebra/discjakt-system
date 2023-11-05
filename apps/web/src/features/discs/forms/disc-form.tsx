@@ -93,7 +93,9 @@ const DiscForm: React.FC<Props> = ({
                   onChange={(e) => {
                     const value = e.currentTarget.value;
 
-                    form.setValue("slug", slugify(value));
+                    if (value) {
+                      form.setValue("slug", slugify(value));
+                    }
 
                     onChange(e);
                   }}

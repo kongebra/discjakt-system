@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/table";
 import { DiscSheet } from "@/features/discs";
 import { DiscSuggestionButton } from "@/features/products";
+import SelectDiscSheet from "@/features/products/components/SelectDiscSheet";
+import SuperDiscSuggestionButton from "@/features/products/components/SuperDiscSuggestionButton";
 import { slugify } from "@/lib";
 import { getDiscs, getManufacturers, getProducts } from "@/lib/server";
 import Image from "next/image";
+import Link from "next/link";
 import { getProductDiscSuggestions } from "suggestor";
 
 export default async function TasksProductsCategorize() {
@@ -43,12 +46,24 @@ export default async function TasksProductsCategorize() {
     };
   });
 
+  const allHaveOneSuggestion = data.every(
+    ({ suggestions }) => suggestions.length === 1
+  );
+
   return (
     <>
       <Section>
         <Card>
           <CardHeader>
             <CardTitle>Tasks - Products - Categorize</CardTitle>
+
+            <SuperDiscSuggestionButton
+              data={data.map((item) => ({
+                product: item.product,
+                disc: item.suggestions[0],
+              }))}
+              disabled={!allHaveOneSuggestion}
+            />
           </CardHeader>
 
           <CardContent>
@@ -75,7 +90,11 @@ export default async function TasksProductsCategorize() {
                         className="max-w-full h-auto"
                       />
                     </TableCell>
-                    <TableCell>{product.name}</TableCell>
+                    <TableCell>
+                      <Link href={product.url} target="_blank">
+                        {product.name}
+                      </Link>
+                    </TableCell>
                     <TableCell>
                       {suggestions.map((disc) => (
                         <DiscSuggestionButton
@@ -89,15 +108,18 @@ export default async function TasksProductsCategorize() {
                       <ProductCategorySheet product={product} />
                     </TableCell>
                     <TableCell>
-                      <DiscSheet
-                        manufactuerers={manufacturers}
-                        disc={{
-                          name: product.name,
-                          slug: slugify(product.name),
-                          image_url: product.image_url,
-                          description: product.description,
-                        }}
-                      />
+                      <div className="flex gap-1">
+                        <DiscSheet
+                          manufactuerers={manufacturers}
+                          disc={{
+                            name: product.name,
+                            slug: slugify(product.name),
+                            image_url: product.image_url,
+                            description: product.description,
+                          }}
+                        />
+                        <SelectDiscSheet product={product} discs={discs} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

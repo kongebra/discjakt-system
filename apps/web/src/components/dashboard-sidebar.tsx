@@ -98,6 +98,14 @@ const DashboardSidebar = () => {
                     Produkt - Kategorisering
                   </DashboardSidebarLink>
                 </li>
+                <li>
+                  <DashboardSidebarLink
+                    href="/dashboard/tasks/products/bags"
+                    icon={TagIcon}
+                  >
+                    Bags - Kategorisering
+                  </DashboardSidebarLink>
+                </li>
               </ul>
             </li>
 

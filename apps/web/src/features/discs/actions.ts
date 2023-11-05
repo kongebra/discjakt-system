@@ -28,7 +28,6 @@ export async function createDiscAction(prevState: any, record: DiscFields) {
       },
     },
   });
-  console.log("createDiscAction", disc);
 
   revalidatePath("/");
 }

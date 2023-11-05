@@ -6,8 +6,8 @@ export const discSchema = z.object({
   description: z.string().optional(),
   image_url: z.string(),
 
-  speed: z.number().min(1).max(14),
-  glide: z.number().min(1).max(7),
+  speed: z.number().min(1).max(16),
+  glide: z.number().min(1).max(8),
   turn: z.number().min(-5).max(1),
   fade: z.number().min(0).max(5),
 

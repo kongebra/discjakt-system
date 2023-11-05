@@ -26,6 +26,9 @@ export default async function DashboardIndex() {
     getManufacturers(),
   ]);
 
+  const categorizedPercentage =
+    100 - (productsNotSet.length / products.length) * 100;
+
   return (
     <>
       <Section>
@@ -37,7 +40,8 @@ export default async function DashboardIndex() {
             title="Products"
             value={products.length.toLocaleString()}
             icon={<TagIcon className="h-4 w-4 text-muted-foreground" />}
-            description={`${productsNotSet.length.toLocaleString()} NOT_SET`}
+            description={`Categorized: ${categorizedPercentage.toFixed(1)} %`}
+            progress={categorizedPercentage}
           />
           <StatCard
             title="Discs"

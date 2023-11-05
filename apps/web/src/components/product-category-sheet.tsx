@@ -58,7 +58,11 @@ const ProductCategorySheet: React.FC<Props> = ({ product }) => {
         </SheetHeader>
 
         <form action={handleSubmit}>
-          <RadioGroup name="category" defaultValue="OTHER" className="mb-4">
+          <RadioGroup
+            name="category"
+            defaultValue={product.category}
+            className="mb-4"
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="BAG" id="BAG" />
               <Label htmlFor="BAG">BAG</Label>
@@ -82,6 +86,10 @@ const ProductCategorySheet: React.FC<Props> = ({ product }) => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="OTHER" id="OTHER" />
               <Label htmlFor="OTHER">OTHER</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="NOT_SET" id="NOT_SET" />
+              <Label htmlFor="NOT_SET">NOT_SET</Label>
             </div>
           </RadioGroup>
 

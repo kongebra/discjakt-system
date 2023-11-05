@@ -40,30 +40,108 @@ function getMatchingSlugs(name: string, discSlugs: string[]): string[] {
 // Handling multiple suggestions
 function performMultipleSuggestionsRules(suggestions: string[]): string[] {
   let result = [...suggestions];
+
   const discraftRules = ["-ss", "-os", "-gt"];
-  if (suggestions.some((s) => discraftRules.some((r) => s.includes(r)))) {
-    result = suggestions.filter((s) =>
-      discraftRules.some((r) => s.includes(r))
-    );
+  if (result.some((s) => discraftRules.some((r) => s.includes(r)))) {
+    result = result.filter((s) => discraftRules.some((r) => s.includes(r)));
   }
 
   const kastaplastRules = ["-z"];
-  if (suggestions.some((s) => kastaplastRules.some((r) => s.includes(r)))) {
-    result = suggestions.filter((s) =>
-      kastaplastRules.some((r) => s.includes(r))
-    );
+  if (result.some((s) => kastaplastRules.some((r) => s.includes(r)))) {
+    result = result.filter((s) => kastaplastRules.some((r) => s.includes(r)));
   }
 
-  const innovaRules = ["leopard3", "aviar3", "teebird3", "tl3"];
-  if (suggestions.some((s) => innovaRules.some((r) => s.includes(r)))) {
-    result = suggestions.filter((s) => innovaRules.some((r) => s.includes(r)));
+  const innovaRules = ["-x"];
+  if (result.some((s) => innovaRules.some((r) => s.includes(r)))) {
+    result = result.filter((s) => innovaRules.some((r) => s.includes(r)));
   }
 
   const latitude64Rules = ["-pro"];
-  if (suggestions.some((s) => latitude64Rules.some((r) => s.includes(r)))) {
-    result = suggestions.filter((s) =>
-      latitude64Rules.some((r) => s.includes(r))
-    );
+  if (result.some((s) => latitude64Rules.some((r) => s.includes(r)))) {
+    result = result.filter((s) => latitude64Rules.some((r) => s.includes(r)));
+  }
+
+  const dynamicDiscsRules = ["emac-", "supreme-", "sockibomb-"];
+  if (result.some((s) => dynamicDiscsRules.some((r) => s.includes(r)))) {
+    result = result.filter((s) => dynamicDiscsRules.some((r) => s.includes(r)));
+  }
+
+  return result;
+}
+
+function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
+  let result = [...suggestions];
+
+  const similarNames: [string, string[]][] = [
+    ["force", ["orc"]],
+    ["rockstar", ["roc"]],
+    ["river", ["rive"]],
+    ["roc3", ["roc"]],
+    ["rocx3", ["roc", "x3"]],
+    ["gator3", ["gator"]],
+    ["magician", ["magic"]],
+    ["scorch", ["orc"]],
+    ["passion", ["ion"]],
+    ["aviarx3", ["aviar", "x3"]],
+    ["vanguard", ["guard"]],
+    ["teebird3", ["teebird", "d3"]],
+    ["aviar3", ["aviar"]],
+    ["leopard3", ["leopard", "d3"]],
+    ["fd3", ["fd", "d3"]],
+    ["fd1", ["fd", "d1"]],
+    ["tl3", ["tl"]],
+    ["md3", ["md", "d3"]],
+    ["stalker", ["stal"]],
+    ["dd3", ["d3"]],
+    ["atlas", ["tl"]],
+  ];
+  for (const [name, slugs] of similarNames) {
+    if (result.includes(name)) {
+      result = result.filter((s) => !slugs.includes(s));
+    }
+  }
+
+  if (result.length > 1) {
+    // Add to this list, if there are multiple suggestions after other filters
+    // Common for these; they are short names, name of a disc that is also a plastic type,
+    // or the name is a common word
+    const knownShortnames = [
+      "ion",
+      "it",
+      "fl",
+      "tl",
+      "sol",
+      "cro",
+      "stal", // TODO: test this more
+      "nova",
+      // plastics
+      "cosmic",
+      "dragon",
+      "diamond",
+      "raptor",
+      // brands
+      "viking",
+    ];
+
+    result = result.filter((s) => !knownShortnames.includes(s));
+  }
+
+  return result;
+}
+
+function exactWordRules(productName: string, suggestions: string[]): string[] {
+  let result = [...suggestions];
+
+  // Check if the suggestions is "it" / "ion"
+  const doubleChecks = ["it", "ion", "stal"];
+  for (const check of doubleChecks) {
+    if (result.includes(check)) {
+      const words = productName.split(" ");
+      // Check if we any any word that actually is "it"
+      if (!words.some((word) => word === check)) {
+        result = result.filter((s) => s !== check);
+      }
+    }
   }
 
   return result;
@@ -78,12 +156,16 @@ export function getProductDiscSuggestions(
   name = removeBlacklistedWords(name);
   name = applyReplaceRule(name);
 
-  console.log(name);
-
   let suggestions = getMatchingSlugs(name, discSlugs);
+
+  suggestions = exactWordRules(name, suggestions);
 
   if (suggestions.length > 1) {
     suggestions = performMultipleSuggestionsRules(suggestions);
+  }
+
+  if (suggestions.length > 1) {
+    suggestions = performSpecialMutiSuggestionsRules(suggestions);
   }
 
   return suggestions;

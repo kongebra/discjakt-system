@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "jest.disabledWorkspaceFolders": [
+      "discjakt",
+      "discjakt",
+      "suggestor",
+      "database",
+      "web",
+      "types",
+      ".next",
+      "scraper"
+    ]
+  }
+}
