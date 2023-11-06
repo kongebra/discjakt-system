@@ -17,6 +17,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.6.0",
     "database": "workspace:*"
   },
   "devDependencies": {

@@ -33,6 +33,7 @@ export const replaceRules: [string[], string][] = [
   // Latitude 64
   [["ballista pro"], "ballista-pro"],
   [["saint pro"], "saint-pro"],
+  [["Glatiator"], "gladiator"],
 
   // Westside Discs
   [["swan 1 reborn"], "swan-1-reborn"],
@@ -83,9 +84,12 @@ export const replaceRules: [string[], string][] = [
   [["rhyno x"], "rhyno-x"],
   [["phantom sword"], "phantom-sword"],
   [["dark rebel"], "dark-rebel"],
-  [["kc pro aviar", "kc-pro aviar"], "kc-aviar"],
+  [["kc pro aviar", "kc-pro aviar", "KC-PRO Putt"], "kc-aviar"],
   [["Sidewindwe"], "sidewinder"],
   [["wraiyh"], "wraith"],
+  [["firebid"], "firebird"],
+  [["thundervant"], "savant"],
+  [["marko3"], "mako3"],
 
   // Guru
   [["short slacker"], "short-slacker"],
@@ -98,6 +102,7 @@ export const replaceRules: [string[], string][] = [
   [["sky god"], "p2"],
   [["cloud breaker", "cloudbreaker", "cloud-breaker"], "dd3"],
   [["dark maul"], "pd"],
+  [["orgin"], "origin"],
 
   // Nordic characters
   [["ø", "ö"], "o"],
