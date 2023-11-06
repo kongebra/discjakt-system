@@ -65,6 +65,7 @@ export class ScraperService {
           SELECTORS.PRODUCT.NAME,
           'text',
           true,
+          url,
           span,
         ) as string | null;
 
@@ -74,6 +75,7 @@ export class ScraperService {
           SELECTORS.PRODUCT.DESCRIPTION,
           'text',
           true,
+          url,
           span,
         ) as string | null;
 
@@ -83,6 +85,7 @@ export class ScraperService {
           SELECTORS.PRODUCT.PRICE,
           'price',
           true,
+          url,
           span,
         ) as number | null;
 
@@ -92,6 +95,7 @@ export class ScraperService {
           SELECTORS.PRODUCT.IMAGE_URL,
           'src',
           true,
+          url,
           span,
         ) as string | null;
 
@@ -134,6 +138,7 @@ export class ScraperService {
     productSelectors: readonly string[],
     type: 'text' | 'price' | 'src',
     isMetadata: boolean = false,
+    url: string,
     span: Span,
   ): string | number | null {
     let value = this.extractFromSelectors(
@@ -144,7 +149,7 @@ export class ScraperService {
       span,
     );
 
-    if (!value) {
+    if (!value || (url.includes('wearediscgolf.no') && type === 'src')) {
       value = this.extractFromSelectors($, productSelectors, type, false, span);
     }
 

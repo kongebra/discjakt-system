@@ -11,7 +11,11 @@ export const SELECTORS = {
       '.price-item--regular',
       '.product .summary .price',
     ],
-    IMAGE_URL: ['.product-information img', '.product-image img'],
+    IMAGE_URL: [
+      '.product-information img',
+      '.product-image img',
+      '.woocommerce-product-gallery__image img',
+    ],
   },
   METADATA: {
     PRODUCT: {

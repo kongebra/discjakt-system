@@ -20,7 +20,7 @@ export class TasksService {
     private readonly queueService: QueueService,
   ) {}
 
-  public async work(retailer: Retailer) {
+  public async work(retailer: Retailer, force: boolean = false) {
     this.logger.debug(`Starting cron for ${retailer.slug}`);
 
     const baseUrl = this.normalizeBaseUrl(retailer.website_url);
@@ -39,7 +39,7 @@ export class TasksService {
     }
 
     await this.updateRetailerTimestamp(retailer, productItems.length);
-    await this.updateProductQueue(productItems, retailer, botRules);
+    await this.updateProductQueue(productItems, retailer, botRules, force);
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)
@@ -122,6 +122,7 @@ export class TasksService {
     productItems: SitemapItem[],
     retailer: Retailer,
     botRules: UserAgent | null,
+    force: boolean = false,
   ) {
     try {
       const productMap = await this.getProductMap(retailer);
@@ -134,7 +135,7 @@ export class TasksService {
 
           const existingProduct = productMap.get(item.loc);
           if (existingProduct) {
-            return this.updateProduct(item, existingProduct, retailer);
+            return this.updateProduct(item, existingProduct, retailer, force);
           }
 
           return this.createProduct(item, retailer);
@@ -173,8 +174,13 @@ export class TasksService {
     item: SitemapItem,
     existingProduct: Product,
     retailer: Retailer,
+    force: boolean = false,
   ) {
     try {
+      if (force) {
+        return await this.queueService.add('update', item, retailer, 'forced');
+      }
+
       const foundLastmod = new Date(existingProduct.lastmod).getTime();
       const itemLastmod = new Date(item.lastmod).getTime();
 
