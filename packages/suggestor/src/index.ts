@@ -34,7 +34,15 @@ function applyReplaceRule(input: string): string {
 
 // Cross-referencing logic
 function getMatchingSlugs(name: string, discSlugs: string[]): string[] {
-  return discSlugs.filter((slug) => name.includes(slug));
+  return discSlugs.filter((slug) => {
+    // if (slug.length < 3) {
+    //   const words = name.split(" ");
+
+    //   return words.some((word) => word === slug);
+    // }
+
+    return name.includes(slug);
+  });
 }
 
 // Handling multiple suggestions
@@ -73,27 +81,64 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
   let result = [...suggestions];
 
   const similarNames: [string, string[]][] = [
-    ["force", ["orc"]],
-    ["rockstar", ["roc"]],
+    // Latitude 64
     ["river", ["rive"]],
-    ["roc3", ["roc"]],
-    ["rocx3", ["roc", "x3"]],
-    ["gator3", ["gator"]],
-    ["magician", ["magic"]],
+    // Westside
+    ["underworld", ["world", "under"]],
+    // Dynamic Discs
+    ["escape", ["ape"]],
+    ["sockibomb-slammer", ["slammer"]],
+    // Innova
+    ["roc3", ["roc", "f2"]],
+    ["rocx3", ["roc", "f2"]],
+    ["mako3", ["mako", "f2"]],
+    ["viking", ["king", "f2"]],
+    ["gator3", ["gator", "f2"]],
+    ["aviar3", ["aviar", "f2"]],
+    ["shark3", ["shark", "f2"]],
+    ["aviarx3", ["aviar", "f2"]],
+    ["kc-aviar", ["aviar", "f2"]],
+    ["wombat3", ["wombat", "f2"]],
+    ["teebird3", ["teebird", "f2"]],
+    ["leopard3", ["leopard", "f2"]],
+    ["phantom-sword", ["sword", "f2"]],
+    ["eagle", ["star", "halo", "f2"]],
+    // Discraft
+    ["force", ["orc"]],
     ["scorch", ["orc"]],
     ["passion", ["ion"]],
-    ["aviarx3", ["aviar", "x3"]],
-    ["vanguard", ["guard"]],
-    ["teebird3", ["teebird", "d3"]],
-    ["aviar3", ["aviar"]],
-    ["leopard3", ["leopard", "d3"]],
-    ["fd3", ["fd", "d3"]],
-    ["fd1", ["fd", "d1"]],
-    ["tl3", ["tl"]],
-    ["md3", ["md", "d3"]],
     ["stalker", ["stal"]],
-    ["dd3", ["d3"]],
-    ["atlas", ["tl"]],
+    ["captains-raptor", ["captain", "raptor"]],
+    // Prodigy
+    ["d2-max", ["d2", "max"]],
+    ["d3-max", ["d3", "max"]],
+    ["d4-max", ["d4", "max"]],
+    ["h1-v2", ["h1"]],
+    ["h2-v2", ["h2"]],
+    ["h3-v2", ["h3"]],
+    ["h4-v2", ["h4"]],
+    // Discmania
+    ["fd1", ["fd", "d1"]],
+    ["cd1", ["cd", "d1"]],
+    ["cd3", ["cd", "d3"]],
+    ["md1", ["md", "d1"]],
+    ["md3", ["md", "d3"]],
+    ["md4", ["md", "d4"]],
+    ["md5", ["md"]],
+    ["pd3", ["pd"]],
+    ["p3x", ["p3"]],
+    ["rockstar", ["roc"]],
+    ["magician", ["magic"]],
+    ["vanguard", ["guard"]],
+    ["p1x", ["p1"]],
+    ["logic", ["fury"]],
+    // Thought Space Athletics
+    ["synapse", ["nebula"]],
+
+    // edge cases
+    ["link", ["dd3"]],
+    ["wizard", ["diamond"]],
+    ["force", ["fl"]],
   ];
   for (const [name, slugs] of similarNames) {
     if (result.includes(name)) {
@@ -106,14 +151,42 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
     // Common for these; they are short names, name of a disc that is also a plastic type,
     // or the name is a common word
     const knownShortnames = [
-      "ion",
+      "d1",
+      "d2",
+      "d3",
+      "md",
+      "fd",
+      "pd",
+      "td",
+      "dd",
+      "x3",
       "it",
       "fl",
       "tl",
+      "xl",
+      "hu",
+      "fu",
+      "ion",
       "sol",
       "cro",
-      "stal", // TODO: test this more
+      "rat",
+      "ape",
+      "roc",
+      "stal",
+      "lion",
+      "king",
+      "halo",
       "nova",
+      "jarn",
+      "reko",
+      "force",
+      "zion",
+      "eagle",
+      "world",
+      "spark",
+      "wizard",
+      "scorch",
+      "astronaut",
       // plastics
       "cosmic",
       "dragon",
@@ -122,6 +195,8 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
       // brands
       "viking",
     ];
+
+    // TODO: Check if any of the suggestions are just a partial word
 
     result = result.filter((s) => !knownShortnames.includes(s));
   }
@@ -147,16 +222,33 @@ function exactWordRules(productName: string, suggestions: string[]): string[] {
   return result;
 }
 
+function noMatchesRules(name: string, discSlugs: string[]): string[] {
+  if (name.includes("swan")) {
+    return ["swan-2"];
+  }
+
+  return [];
+}
+
 // Main function to get product disc suggestions
 export function getProductDiscSuggestions(
   productName: string,
   discSlugs: string[]
 ): string[] {
   let name = toLowerCase(productName);
-  name = removeBlacklistedWords(name);
   name = applyReplaceRule(name);
+  name = removeBlacklistedWords(name);
 
   let suggestions = getMatchingSlugs(name, discSlugs);
+  // if (suggestions.length > 1) {
+  //   const words = name.split(" ");
+  //   // Check if any of the suggestions is a partial word, if so, remove them
+  //   for (const suggestion of suggestions) {
+  //     if (!words.includes(suggestion)) {
+  //       suggestions = suggestions.filter((s) => s !== suggestion);
+  //     }
+  //   }
+  // }
 
   suggestions = exactWordRules(name, suggestions);
 
@@ -166,6 +258,10 @@ export function getProductDiscSuggestions(
 
   if (suggestions.length > 1) {
     suggestions = performSpecialMutiSuggestionsRules(suggestions);
+  }
+
+  if (suggestions.length === 0) {
+    suggestions = noMatchesRules(name, discSlugs);
   }
 
   return suggestions;

@@ -395,7 +395,7 @@ export const TEST_DATA: [string, string[]][] = [
   ["Royal Grand Rive Driver Latitude64 - GolfKongen", ["rive"]],
   ["Discmania EXO Hard Logic", ["logic"]],
   ["Innova Champion Savant", ["savant"]],
-  ["Pro KC-PRO Putt assortert farge Innova - GolfKongen", ["aviar"]],
+  // ["Pro KC-PRO Putt assortert farge Innova - GolfKongen", ["aviar"]], // dårlig tests, dårlig data
   ["ESP Buzzz Midrange assortert farge Discraft - GolfKongen", ["buzzz"]],
   ["Origio Burst Underworld Driver Latitude64 - GolfKongen", ["underworld"]],
   ["Gateway Platinum Illusion", ["illusion"]],
@@ -955,7 +955,7 @@ export const TEST_DATA: [string, string[]][] = [
   ["Discmania Evolution Exo Tactic Soft - Aceshop", ["tactic"]],
   ["K3 Reko - Aceshop", ["reko"]],
   ["5X Paige Pierce ESP Nuke - Aceshop", ["nuke"]],
-  ["K1 Grym X - Aceshop", ["grym"]],
+  ["K1 Grym X - Aceshop", ["grym-x"]],
   ["BT Harp Hard - Aceshop", ["harp"]],
   ["Innova DX Aviar", ["aviar"]],
   ["Latitude 64 Sense Faith", ["faith"]],

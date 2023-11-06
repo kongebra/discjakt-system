@@ -14,6 +14,10 @@
     },
     "db:migrate:deploy": {},
     "db:push": {},
-    "db:seed": {}
+    "db:seed": {},
+    "test": {},
+    "test:watch": {
+      "cache": false
+    }
   }
 }

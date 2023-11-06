@@ -16,11 +16,19 @@ export const replaceRules: [string[], string][] = [
   [["crank gt"], "crank-gt"],
   [["crank os"], "crank-os"],
   [["surge ss"], "surge-ss"],
+  [["zone os"], "zone-os"],
+  [["challanger"], "challenger"],
+  [["challanger os", "challenger os"], "challenger-os"],
+  [["challanger ss", "challenger ss"], "challenger-ss"],
+  [["captains raptor", "captain's raptor"], "captains-raptor"],
 
   // Kastaplast
   [["kaxe z"], "kaxe-z"],
   [["grym x"], "grym-x"],
   [["reko x"], "reko-x"],
+  [["g�te"], "gote"],
+  [["st�l"], "stal"],
+  [["j�rn"], "jarn"],
 
   // Latitude 64
   [["ballista pro"], "ballista-pro"],
@@ -46,24 +54,50 @@ export const replaceRules: [string[], string][] = [
   [["d model s", "d-model s"], "d-model-s"],
   [["d model os", "d-model os"], "d-model-os"],
   [["d model us", "d-model us"], "d-model-us"],
+  [["f model s", "f-model s"], "f-model-s"],
+  [["f model os", "f-model os"], "f-model-os"],
+  [["f model us", "f-model us"], "f-model-us"],
   [["p model s", "p-model s"], "p-model-s"],
   [["p model os", "p-model os"], "p-model-os"],
   [["p model us", "p-model us"], "p-model-us"],
+  [["h1v2", "h1 v2"], "h1-v2"],
   [["h2v2", "h2 v2"], "h2-v2"],
   [["h3v2", "h3 v2"], "h3-v2"],
-  [["fx 2"], "fx-2"],
-  [["fx 3"], "fx-3"],
+  [["fx2", "fx 2"], "fx-2"],
+  [["fx3", "fx 3"], "fx-3"],
+  [["mx3", "mx 3"], "mx-3"],
+  [["d3 max"], "d3-max"],
+  [["pa 1", "pa1"], "pa-1"],
+  [["pa 2", "pa2"], "pa-2"],
+  [["pa 3", "pa3"], "pa-3"],
+  [["pa 4", "pa4"], "pa-4"],
+  [["pa 5", "pa5"], "pa-5"],
+  [["d1 max"], "d1-max"],
+  [["d2 max"], "d2-max"],
+  [["d3 max"], "d3-max"],
+  [["d4 max"], "d4-max"],
+  [["d2 pro"], "d2-pro"],
 
   // Innova
   [["aviar x"], "aviar-x"],
   [["rhyno x"], "rhyno-x"],
   [["phantom sword"], "phantom-sword"],
+  [["dark rebel"], "dark-rebel"],
+  [["kc pro aviar", "kc-pro aviar"], "kc-aviar"],
+  [["Sidewindwe"], "sidewinder"],
+  [["wraiyh"], "wraith"],
 
   // Guru
   [["short slacker"], "short-slacker"],
   [["silent cruiser"], "silent-cruiser"],
   [["mad mission"], "mad-mission"],
   [["flow motion"], "flow-motion"],
+  [["night trooper"], "night-trooper"],
+
+  // Discmania
+  [["sky god"], "p2"],
+  [["cloud breaker", "cloudbreaker", "cloud-breaker"], "dd3"],
+  [["dark maul"], "pd"],
 
   // Nordic characters
   [["ø", "ö"], "o"],

@@ -125,6 +125,8 @@ export const blacklist = [
   "Clint Calvin",
   "Justin Rosak",
   "philo brathwaite",
+  "Øyvind Jarnes",
+  "David Feldberg",
 
   // FPO names
   "Kristin Tattar",
@@ -208,10 +210,13 @@ export const blacklist = [
   "aceshop",
   "wearediscgolf.no",
   "golfkongen",
+  "westside discs",
+  "krokhol disc golf shop",
 
   // etc
   "founders edition",
   "Special Edition",
+  "limited edition",
   "Signature Series",
   "tour series",
   "world champion",
@@ -234,6 +239,24 @@ export const blacklist = [
   "assortert",
   "farge",
   "x-out",
+  "air force",
+  "worlds",
+  "dyemax",
+  "Captain America",
+  "170+ carat",
+  "mini stamp",
+  "twisted flyer",
+  "sparkle",
+  "ledgestone",
+  "lite",
+  "commemorative",
+  "InVision",
+  "InnVision",
+  "Originals",
+  "CrushBoys",
+  "Crush Boys",
+  "misprint",
+  "first run",
 
   // manufacturers
   "discmania",
@@ -288,4 +311,10 @@ export const blacklist = [
   "retro burst",
   "royal grand",
   "prime burst",
+  "flx",
+  "bt soft",
+  "ice orbit",
+  "glimmer",
+  "metal flake",
+  "atomic",
 ].map((w) => w.toLowerCase());
