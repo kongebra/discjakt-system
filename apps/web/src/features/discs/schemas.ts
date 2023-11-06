@@ -8,8 +8,8 @@ export const discSchema = z.object({
 
   speed: z.number().min(1).max(16),
   glide: z.number().min(1).max(8),
-  turn: z.number().min(-5).max(1),
-  fade: z.number().min(0).max(5),
+  turn: z.number().min(-5).max(3),
+  fade: z.number().min(0).max(6),
 
   type: z.enum(["PUTTER", "MIDRANGE", "FAIRWAY", "DISTANCE"]),
 
