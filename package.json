@@ -4,7 +4,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:scraper": "turbo run dev --filter=scraper",
-    "dev:web": "turbo run dev --filter=web",
+    "dev:web": "turbo run dev --filter=web --filter=suggestor",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:migrate:deploy": "turbo run db:migrate:deploy",

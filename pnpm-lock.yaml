@@ -308,6 +308,9 @@ importers:
 
   packages/suggestor:
     dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.6.0
+        version: 1.6.0
       database:
         specifier: workspace:*
         version: link:../database
