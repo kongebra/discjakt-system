@@ -1,5 +1,8 @@
 export const blacklist = [
   " -",
+  ",",
+  ".",
+  "- ",
   "�",
 
   // Years + future proofing
@@ -212,6 +215,7 @@ export const blacklist = [
   "golfkongen",
   "westside discs",
   "krokhol disc golf shop",
+  "spinnvill",
 
   // etc
   "founders edition",
@@ -257,6 +261,7 @@ export const blacklist = [
   "Crush Boys",
   "misprint",
   "first run",
+  "Smuggler's Pursuit",
 
   // manufacturers
   "discmania",
@@ -323,4 +328,16 @@ export const blacklist = [
   "(Bear)",
   "Authorized dealer",
   "Teddy Bear",
+  "reprocessed",
+  "huk lab",
+  "flylife",
+  "400 spectrum",
+  "500 spectrum",
+  "big stamp",
+  "Flex 3",
+
+  // bags
+  "bx3",
+  "ax5",
+  "cx1",
 ].map((w) => w.toLowerCase());

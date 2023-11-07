@@ -38,6 +38,7 @@ export const replaceRules: [string[], string][] = [
   // Westside Discs
   [["swan 1 reborn"], "swan-1-reborn"],
   [["swan 2", "swan2"], "swan-2"],
+  [["war horse"], "war-horse"],
 
   // Dynamic Discs
   [["emac truth"], "emac-truth"],
@@ -64,6 +65,7 @@ export const replaceRules: [string[], string][] = [
   [["h1v2", "h1 v2"], "h1-v2"],
   [["h2v2", "h2 v2"], "h2-v2"],
   [["h3v2", "h3 v2"], "h3-v2"],
+  [["h4v2", "h4 v2"], "h4-v2"],
   [["fx2", "fx 2"], "fx-2"],
   [["fx3", "fx 3"], "fx-3"],
   [["mx3", "mx 3"], "mx-3"],
@@ -103,6 +105,9 @@ export const replaceRules: [string[], string][] = [
   [["cloud breaker", "cloudbreaker", "cloud-breaker"], "dd3"],
   [["dark maul"], "pd"],
   [["orgin"], "origin"],
+
+  // Legacy
+  [["phantom warrior"], "phantom-warrior"],
 
   // Nordic characters
   [["ø", "ö"], "o"],

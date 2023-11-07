@@ -20,7 +20,7 @@ function removeBlacklistedWords(input: string): string {
         `\\b${escapedWord}\\b|\\s${escapedWord}\\s|\\s${escapedWord}\\b|\\b${escapedWord}\\s`,
         "gi"
       );
-      result = result.replace(regex, " ");
+      result = result.replaceAll(regex, " ");
     }
 
     span.end();
@@ -115,13 +115,20 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
       const similarNames: [string, string[]][] = [
         // Latitude 64
         ["river", ["rive"]],
+        ["flow", ["fl"]],
         // Westside
         ["underworld", ["world", "under"]],
+        ["sorcerer", ["orc"]],
         // Dynamic Discs
         ["escape", ["ape"]],
         ["sockibomb-slammer", ["slammer"]],
+        ["enforcer", ["force", "orc"]],
+        // Kastaplast
+        ["kaxe", ["axe"]],
+        ["kaxe-z", ["axe", "kaxe"]],
         // Innova
         ["roc3", ["roc"]],
+        ["vroc", ["roc"]],
         ["rocx3", ["roc"]],
         ["mako3", ["mako"]],
         ["viking", ["king"]],
@@ -137,6 +144,10 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["phantom-sword", ["sword"]],
         ["eagle", ["star", "halo"]],
         ["hawkeye", ["hawk"]],
+        ["stingray", ["sting"]],
+        ["rat", ["star", "ra"]],
+        ["dark-rebel", ["rebel"]],
+        ["destroyer", ["raptor"]],
         // Discraft
         ["force", ["orc"]],
         ["scorch", ["orc"]],
@@ -170,16 +181,22 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["vanguard", ["guard"]],
         ["p1x", ["p1"]],
         ["logic", ["fury"]],
+        ["pd", ["phenom"]],
         // Thought Space Athletics
         ["synapse", ["nebula"]],
         ["animus", ["nebula"]],
         // MVP
         ["nomad", ["wolf"]],
-
+        // Guru
+        ["flow-motion", ["flow"]],
+        // Yikun
+        ["kui", ["dragon"]],
         // edge cases
         ["link", ["dd3"]],
         ["wizard", ["diamond"]],
         ["force", ["fl"]],
+        ["stratus", ["rat"]],
+        ["p2", ["spider"]],
       ];
 
       for (const [name, slugs] of similarNames) {
@@ -209,12 +226,17 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "xl",
           "hu",
           "fu",
+          "ra",
+
           "ion",
           "sol",
           "cro",
           "rat",
           "ape",
-          "roc",
+          // "roc",
+          "jun",
+          "phi",
+
           "stal",
           "lion",
           "king",
@@ -222,21 +244,24 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "nova",
           "jarn",
           "reko",
-          "force",
           "zion",
+          "riot",
+
+          // "force",
           "eagle",
           "world",
           "spark",
+
           "wizard",
           "scorch",
-          "astronaut",
-          // plastics
           "cosmic",
-          "dragon",
-          "diamond",
-          "raptor",
-          // brands
           "viking",
+
+          "diamond",
+          "astronaut",
+
+          // "raptor",
+          // "dragon",
         ];
 
         // TODO: Check if any of the suggestions are just a partial word
@@ -326,6 +351,17 @@ export function getProductDiscSuggestions(
     if (suggestions.length === 0) {
       suggestions = noMatchesRules(name, discSlugs);
       span.setAttribute("suggestor.noMatchesRules", suggestions);
+    }
+
+    if (suggestions.length === 1) {
+      const [suggestion] = suggestions;
+      const exceptions = ["ra", "fl"];
+      if (exceptions.includes(suggestion)) {
+        const words = name.split(" ");
+        if (!words.some((word) => word === suggestion)) {
+          suggestions = [];
+        }
+      }
     }
 
     span.setAttribute("suggestor.finalSuggestions", suggestions);
