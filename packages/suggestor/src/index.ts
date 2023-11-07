@@ -117,6 +117,7 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["river", ["rive"]],
         ["flow", ["fl"]],
         ["compass", ["amp"]],
+        ["striker", ["strike"]],
         // Westside
         ["underworld", ["world", "under"]],
         ["sorcerer", ["orc"]],
@@ -128,6 +129,8 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["kaxe", ["axe"]],
         ["kaxe-z", ["axe", "kaxe"]],
         // Innova
+        ["roc", ["xl"]],
+        ["rat", ["xl"]],
         ["roc3", ["roc"]],
         ["vroc", ["roc"]],
         ["rocx3", ["roc", "x3"]],
@@ -149,6 +152,7 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["rat", ["star", "ra"]],
         ["dark-rebel", ["rebel"]],
         ["destroyer", ["raptor"]],
+        ["lion", ["halo"]],
         // Discraft
         ["force", ["orc"]],
         ["scorch", ["orc"]],
@@ -158,8 +162,9 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["buzzz", ["nebula"]],
         ["zone", ["x5"]],
         ["wrath", ["rat"]],
+        ["rattler", ["rat"]],
         // Prodigy
-        ["d3", ["lion"]],
+        ["d3", ["lion", "fl"]],
         ["d1-max", ["d1", "max"]],
         ["d2-max", ["d2", "max"]],
         ["d3-max", ["d3", "max"]],
@@ -176,6 +181,7 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["fx-2", ["spectrum"]],
         ["f7", ["spectrum"]],
         ["pa-3", ["spectrum"]],
+        ["x3", ["spectrum"]],
         // Discmania
         ["fd1", ["fd", "d1"]],
         ["cd1", ["cd", "d1"]],
@@ -194,8 +200,10 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["vanguard", ["guard"]],
         ["p1x", ["p1"]],
         ["logic", ["fury"]],
-        ["pd", ["phenom"]],
         ["method", ["titan"]],
+        ["fd", ["hu"]],
+        ["pd", ["phenom"]],
+        ["cd", ["raze"]],
         // Thought Space Athletics
         ["synapse", ["nebula"]],
         ["animus", ["nebula"]],
@@ -203,10 +211,12 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         // MVP
         ["nomad", ["wolf"]],
         ["photon", ["max"]],
+        ["relay", ["cosmic"]],
         // Guru
         ["flow-motion", ["flow", "motion"]],
         // Yikun
         ["kui", ["dragon"]],
+        ["kotuku", ["cosmic"]],
         // RPM
         ["pekapeka", ["rat"]],
         ["kea", ["rat"]],
@@ -218,7 +228,16 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["peppermint", ["pepper", "mint"]],
         // Viking
         ["nordic-warrior", ["warrior"]], // TODO: Slett "warrior"
+        // Millenium
+        ["aurora", ["sirius"]],
+        ["omega-big-bead", ["omega"]],
+        ["omega-4", ["sirius", "luna", "omega"]],
+        // Northstar
+        ["launcher-us", ["launcher"]],
+        ["launcher-os", ["launcher"]],
+        ["paladin-os", ["paladin"]],
         // edge cases
+        ["razeri", ["raze"]],
         ["link", ["dd3"]],
         ["wizard", ["diamond"]],
         ["force", ["fl"]],
@@ -237,13 +256,6 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         // Common for these; they are short names, name of a disc that is also a plastic type,
         // or the name is a common word
         const knownShortnames = [
-          "d1",
-          "d2",
-          "d3",
-          "f2",
-          "md",
-          "fd",
-          "pd",
           "td",
           "dd",
           "x3",
@@ -254,6 +266,13 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "hu",
           "fu",
           "ra",
+          "fd",
+          "d1",
+          "d2",
+          "d3",
+          "f2",
+          "md",
+          "pd",
 
           "ion",
           "sol",
@@ -267,9 +286,9 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "dae",
 
           "stal",
-          "lion",
           "king",
           "halo",
+          "lion",
           "nova",
           "jarn",
           "reko",
@@ -288,8 +307,9 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "glide",
           "alien",
 
+          "marvel",
           "shield",
-          "aurora",
+          // "aurora",
           "wizard",
           "scorch",
           "cosmic",

@@ -109,6 +109,8 @@ export const replaceRules: [string[], string][] = [
   [["dark maul"], "pd"],
   [["orgin"], "origin"],
   [["maesto"], "maestro"],
+  [["sateentekijä"], "rainmaker"],
+  [["night strike"], "fd"],
 
   // Legacy
   [["phantom warrior"], "phantom-warrior"],
@@ -120,7 +122,7 @@ export const replaceRules: [string[], string][] = [
   [["dos x"], "dos-x"],
   [["mad cat", "madcat"], "mad-cat"],
   [["penny putter", "penny"], "penny-putter"],
-  [["texas ranger"], "texas-ranger"],
+  [["texas ranger", "bravo ranger"], "texas-ranger"],
   [["the dome"], "the-dome"],
 
   // Clash
@@ -153,7 +155,7 @@ export const replaceRules: [string[], string][] = [
   [["Intertia"], "inertia"], // TODO: delete "Intertia"
 
   // Nordic characters
-  [["ø", "ö", "ô "], "o"],
+  [["ø", "ö", "ô"], "o"],
   [["å", "ä", "â"], "a"],
   [["ü"], "u"],
   [["ß"], "ss"],

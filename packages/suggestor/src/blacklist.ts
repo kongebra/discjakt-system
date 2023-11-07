@@ -1,10 +1,4 @@
 export const blacklist = [
-  " -",
-  ",",
-  ".",
-  "- ",
-  "�",
-
   // Years + future proofing
   "2028",
   "2027",
@@ -224,6 +218,9 @@ export const blacklist = [
   "DiscShopen.no",
   "DiscShopenno",
   "DiscShopen",
+  "Frisbeesor.no",
+  "Frisbeesorno",
+  "Frisbeesor",
 
   // etc
   "founders edition",
@@ -285,6 +282,7 @@ export const blacklist = [
   "dynamic discs",
   "infinite",
   "guru",
+  "Thought Space Athletics",
 
   // plastics
   "esp",
@@ -358,6 +356,9 @@ export const blacklist = [
   "Encounter Stamp",
   "Navigator Stamp",
   "Eyrachnid Stamp",
+  "aurora line",
+  "Factory Second",
+  "k1",
 
   // bags
   "bx3",
@@ -366,4 +367,9 @@ export const blacklist = [
 
   // last
   "stamp",
+  " -",
+  ",",
+  ".",
+  "- ",
+  "�",
 ].map((w) => w.toLowerCase());
