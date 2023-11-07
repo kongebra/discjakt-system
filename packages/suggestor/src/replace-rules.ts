@@ -29,6 +29,7 @@ export const replaceRules: [string[], string][] = [
   [["g�te"], "gote"],
   [["st�l"], "stal"],
   [["j�rn"], "jarn"],
+  [["berg x"], "berg-x"],
 
   // Latitude 64
   [["ballista pro"], "ballista-pro"],
@@ -45,6 +46,7 @@ export const replaceRules: [string[], string][] = [
   [["emac judge"], "emac-judge"],
   [["sockibomb slammer"], "sockibomb-slammer"],
   [["supreme judge"], "supreme-judge"],
+  [["mavrick"], "maverick"],
 
   // Gateway
   [["spirit diamond", "diamond spirit"], "spirit"],
@@ -108,6 +110,29 @@ export const replaceRules: [string[], string][] = [
 
   // Legacy
   [["phantom warrior"], "phantom-warrior"],
+
+  // Viking
+  [["nordic warrior"], "nordic-warrior"],
+
+  // Lone Star
+  [["dos x"], "dos-x"],
+  [["mad cat"], "mad-cat"],
+  [["penny putter"], "penny-putter"],
+
+  // Clash
+  [["wild honey"], "wild-honey"],
+
+  // Northstar
+  [["paladin os"], "paladin-os"],
+  [["launcher os"], "launcher-os"],
+  [["launcher us"], "launcher-us"],
+  [["pacific os"], "pacific-os"],
+
+  // Infinite
+  [["kon tiki"], "kon-tiki"],
+
+  // Yikun
+  [["da'e"], "dae"],
 
   // Nordic characters
   [["ø", "ö"], "o"],

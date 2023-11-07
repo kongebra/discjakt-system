@@ -130,6 +130,8 @@ export const blacklist = [
   "philo brathwaite",
   "Øyvind Jarnes",
   "David Feldberg",
+  "gavin rathbun",
+  "gavin ratburn",
 
   // FPO names
   "Kristin Tattar",
@@ -335,6 +337,11 @@ export const blacklist = [
   "500 spectrum",
   "big stamp",
   "Flex 3",
+  "warpaint",
+  "Grateful",
+  "Rated Memorial",
+  "stamp",
+  "Musematte",
 
   // bags
   "bx3",
