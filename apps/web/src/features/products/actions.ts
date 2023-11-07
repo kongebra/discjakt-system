@@ -71,3 +71,21 @@ export async function setProductsBagCategory(products: Product[]) {
 
   revalidatePath("/");
 }
+
+export async function setProductCategory(
+  productId: string,
+  category: Product["category"]
+) {
+  "use server";
+
+  await updateProduct({
+    where: {
+      id: productId,
+    },
+    data: {
+      category: category,
+    },
+  });
+
+  revalidatePath("/");
+}
