@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/table";
 import { DiscSheet } from "@/features/discs";
 import { DiscSuggestionButton } from "@/features/products";
+import CategoryButton from "@/features/products/components/CategoryButton";
 import SelectDiscSheet from "@/features/products/components/SelectDiscSheet";
 import SuperDiscSuggestionButton from "@/features/products/components/SuperDiscSuggestionButton";
 import { slugify } from "@/lib";
 import { getDiscs, getManufacturers, getProducts } from "@/lib/server";
+import { Product } from "database";
 import Image from "next/image";
 import Link from "next/link";
 import { getProductDiscSuggestions } from "suggestor";
@@ -105,7 +107,23 @@ export default async function TasksProductsCategorize() {
                       ))}
                     </TableCell>
                     <TableCell>
-                      <ProductCategorySheet product={product} />
+                      <div className="flex gap-1">
+                        {(
+                          [
+                            "ACCESSORY",
+                            "APPAREL",
+                            "BAG",
+                            "BASKET",
+                            "OTHER",
+                          ] as Product["category"][]
+                        ).map((category) => (
+                          <CategoryButton
+                            key={category}
+                            product={product}
+                            category={category}
+                          />
+                        ))}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
