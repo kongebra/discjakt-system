@@ -30,7 +30,7 @@ export default async function TasksProductsCategorize() {
           equals: "NOT_SET",
         },
       },
-      take: 64,
+      take: 128,
     }),
     getDiscs(),
     getManufacturers(),

@@ -70,6 +70,7 @@ export const replaceRules: [string[], string][] = [
   [["h4v2", "h4 v2"], "h4-v2"],
   [["fx2", "fx 2"], "fx-2"],
   [["fx3", "fx 3"], "fx-3"],
+  [["mx1", "mx 1"], "mx-1"],
   [["mx3", "mx 3"], "mx-3"],
   [["d3 max"], "d3-max"],
   [["pa 1", "pa1"], "pa-1"],
@@ -81,7 +82,7 @@ export const replaceRules: [string[], string][] = [
   [["d2 max"], "d2-max"],
   [["d3 max"], "d3-max"],
   [["d4 max"], "d4-max"],
-  [["d2 pro"], "d2-pro"],
+  [["d2 pro", "d2pro"], "d2-pro"],
 
   // Innova
   [["aviar x"], "aviar-x"],
@@ -107,17 +108,20 @@ export const replaceRules: [string[], string][] = [
   [["cloud breaker", "cloudbreaker", "cloud-breaker"], "dd3"],
   [["dark maul"], "pd"],
   [["orgin"], "origin"],
+  [["maesto"], "maestro"],
 
   // Legacy
   [["phantom warrior"], "phantom-warrior"],
 
   // Viking
-  [["nordic warrior"], "nordic-warrior"],
+  [["nordic warrior", "warrior"], "nordic-warrior"], // TODO: har laget en "warrior", dette må fikses
 
   // Lone Star
   [["dos x"], "dos-x"],
-  [["mad cat"], "mad-cat"],
-  [["penny putter"], "penny-putter"],
+  [["mad cat", "madcat"], "mad-cat"],
+  [["penny putter", "penny"], "penny-putter"],
+  [["texas ranger"], "texas-ranger"],
+  [["the dome"], "the-dome"],
 
   // Clash
   [["wild honey"], "wild-honey"],
@@ -130,13 +134,27 @@ export const replaceRules: [string[], string][] = [
 
   // Infinite
   [["kon tiki"], "kon-tiki"],
+  [["omega4", "omega 4"], "omega-4"],
 
   // Yikun
   [["da'e"], "dae"],
 
+  // Millenium
+  [["Omega Big Bead"], "omega-big-bead"],
+
+  // Axios
+  [["time lapse"], "time-lapse"],
+
+  // Wild
+  [["great white"], "great-white"],
+  [["sea otter"], "sea-otter"],
+
+  // MVP
+  [["Intertia"], "inertia"], // TODO: delete "Intertia"
+
   // Nordic characters
-  [["ø", "ö"], "o"],
-  [["å", "ä"], "a"],
+  [["ø", "ö", "ô "], "o"],
+  [["å", "ä", "â"], "a"],
   [["ü"], "u"],
   [["ß"], "ss"],
   [["æ"], "ae"],

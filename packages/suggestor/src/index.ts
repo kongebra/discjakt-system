@@ -116,6 +116,7 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         // Latitude 64
         ["river", ["rive"]],
         ["flow", ["fl"]],
+        ["compass", ["amp"]],
         // Westside
         ["underworld", ["world", "under"]],
         ["sorcerer", ["orc"]],
@@ -129,16 +130,16 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         // Innova
         ["roc3", ["roc"]],
         ["vroc", ["roc"]],
-        ["rocx3", ["roc"]],
+        ["rocx3", ["roc", "x3"]],
         ["mako3", ["mako"]],
         ["viking", ["king"]],
         ["gator3", ["gator"]],
         ["aviar3", ["aviar"]],
         ["shark3", ["shark"]],
-        ["aviarx3", ["aviar"]],
+        ["aviarx3", ["aviar", "x3"]],
         ["kc-aviar", ["aviar"]],
         ["wombat3", ["wombat"]],
-        ["teebird", ["f2"]],
+        ["teebird", ["f2", "barbarian"]],
         ["teebird3", ["teebird"]],
         ["leopard3", ["leopard"]],
         ["phantom-sword", ["sword"]],
@@ -156,41 +157,67 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
         ["captains-raptor", ["captain", "raptor"]],
         ["buzzz", ["nebula"]],
         ["zone", ["x5"]],
+        ["wrath", ["rat"]],
         // Prodigy
+        ["d3", ["lion"]],
+        ["d1-max", ["d1", "max"]],
         ["d2-max", ["d2", "max"]],
         ["d3-max", ["d3", "max"]],
         ["d4-max", ["d4", "max"]],
-        ["h1-v2", ["h1"]],
-        ["h2-v2", ["h2"]],
-        ["h3-v2", ["h3"]],
-        ["h4-v2", ["h4"]],
+        ["h1-v2", ["h1", "spectrum"]],
+        ["h2-v2", ["h2", "spectrum"]],
+        ["h3-v2", ["h3", "spectrum"]],
+        ["h4-v2", ["h4", "spectrum"]],
         ["spectrum", ["a3"]],
+        ["f5", ["shark"]],
+        ["a2", ["spectrum"]],
+        ["pa-4", ["spectrum"]],
+        ["pa-5", ["spectrum", "count"]],
+        ["fx-2", ["spectrum"]],
+        ["f7", ["spectrum"]],
+        ["pa-3", ["spectrum"]],
         // Discmania
         ["fd1", ["fd", "d1"]],
         ["cd1", ["cd", "d1"]],
         ["cd2", ["cd", "d2"]],
         ["cd3", ["cd", "d3"]],
         ["md1", ["md", "d1"]],
-        ["md3", ["md", "d3", "bear"]],
+        ["md3", ["md", "d3", "bear", "crown"]],
         ["md4", ["md", "d4"]],
         ["md5", ["md", "d5"]],
         ["pd3", ["pd"]],
+        ["p1x", ["wings"]],
         ["p3x", ["p3", "d3"]],
+        ["dd3", ["echo"]],
         ["rockstar", ["roc"]],
         ["magician", ["magic"]],
         ["vanguard", ["guard"]],
         ["p1x", ["p1"]],
         ["logic", ["fury"]],
         ["pd", ["phenom"]],
+        ["method", ["titan"]],
         // Thought Space Athletics
         ["synapse", ["nebula"]],
         ["animus", ["nebula"]],
+        ["praxis", ["axis", "nebula"]],
         // MVP
         ["nomad", ["wolf"]],
+        ["photon", ["max"]],
         // Guru
-        ["flow-motion", ["flow"]],
+        ["flow-motion", ["flow", "motion"]],
         // Yikun
         ["kui", ["dragon"]],
+        // RPM
+        ["pekapeka", ["rat"]],
+        ["kea", ["rat"]],
+        // Divergant
+        ["tiyanak", ["yan"]],
+        // Legacy
+        ["rampage", ["amp"]],
+        // Clash
+        ["peppermint", ["pepper", "mint"]],
+        // Viking
+        ["nordic-warrior", ["warrior"]], // TODO: Slett "warrior"
         // edge cases
         ["link", ["dd3"]],
         ["wizard", ["diamond"]],
@@ -233,9 +260,11 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "cro",
           "rat",
           "ape",
-          // "roc",
+          "roc",
           "jun",
           "phi",
+          "amp",
+          "dae",
 
           "stal",
           "lion",
@@ -246,26 +275,45 @@ function performSpecialMutiSuggestionsRules(suggestions: string[]): string[] {
           "reko",
           "zion",
           "riot",
+          "echo",
+          "stud",
 
           // "force",
+          // "dragon",
           "eagle",
           "world",
           "spark",
+          "wings",
+          "ultra",
+          "glide",
+          "alien",
 
+          "shield",
+          "aurora",
           "wizard",
           "scorch",
           "cosmic",
           "viking",
+          "nebula",
+          "raptor",
 
           "diamond",
-          "astronaut",
+          "pursuit",
 
-          // "raptor",
-          // "dragon",
+          "spectrum",
+
+          "astronaut",
         ];
 
-        // TODO: Check if any of the suggestions are just a partial word
-        result = result.filter((s) => !knownShortnames.includes(s));
+        for (const item of result) {
+          if (knownShortnames.includes(item)) {
+            result = result.filter((s) => s !== item);
+          }
+
+          if (result.length === 1) {
+            break;
+          }
+        }
       }
 
       span.end();

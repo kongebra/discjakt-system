@@ -210,6 +210,9 @@ export const blacklist = [
   "Hannah Stefanovich",
   "Chelsea Howells",
   "Karissa Dedmon",
+  "Heather Young",
+
+  "Manabu Kajiyama",
 
   // retailers
   "aceshop",
@@ -218,6 +221,9 @@ export const blacklist = [
   "westside discs",
   "krokhol disc golf shop",
   "spinnvill",
+  "DiscShopen.no",
+  "DiscShopenno",
+  "DiscShopen",
 
   // etc
   "founders edition",
@@ -226,6 +232,9 @@ export const blacklist = [
   "Signature Series",
   "tour series",
   "world champion",
+  "Champions Cup",
+  "Champions",
+  "Ravenwolf Stamp",
   "7x",
   "6x",
   "5x",
@@ -236,6 +245,7 @@ export const blacklist = [
   "fairway",
   "distance",
   "driver",
+  "fly-dyed",
   "fly dye",
   "fundraiser",
   "heatland",
@@ -264,6 +274,8 @@ export const blacklist = [
   "misprint",
   "first run",
   "Smuggler's Pursuit",
+  "Bottom Stamped",
+  "rancho",
 
   // manufacturers
   "discmania",
@@ -340,11 +352,18 @@ export const blacklist = [
   "warpaint",
   "Grateful",
   "Rated Memorial",
-  "stamp",
   "Musematte",
+  "Sky Walker",
+  "Strawberry",
+  "Encounter Stamp",
+  "Navigator Stamp",
+  "Eyrachnid Stamp",
 
   // bags
   "bx3",
   "ax5",
   "cx1",
+
+  // last
+  "stamp",
 ].map((w) => w.toLowerCase());
