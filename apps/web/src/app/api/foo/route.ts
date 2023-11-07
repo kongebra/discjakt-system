@@ -3,53 +3,37 @@ import {
   getProducts,
   getRetailers,
   updateManyProducts,
+  updateProduct,
   updateRetailer,
 } from "@/lib/server";
 import { NextResponse } from "next/server";
 import { getProductDiscSuggestions } from "suggestor";
 
 export async function GET(req: Request) {
-  const [products, discs] = await Promise.all([
+  const [products] = await Promise.all([
     getProducts({
       where: {
         category: {
-          equals: "NOT_SET",
+          equals: "DISC",
         },
-        AND: [
-          {
-            name: {
-              contains: "grip eq",
-              mode: "insensitive",
-            },
+      },
+      select: {
+        id: true,
+        name: true,
+        disc: {
+          select: {
+            slug: true,
           },
-        ],
+        },
       },
     }),
-    getDiscs(),
   ]);
 
-  const slugs = discs.map((disc) => disc.slug);
+  const testData = products.map((product) => [
+    product.name,
+    [(product as any).disc?.slug],
+    product.id,
+  ]);
 
-  const result = products.map((product) => {
-    return {
-      product,
-      suggestions: getProductDiscSuggestions(product.name, slugs),
-    };
-  });
-
-  const update = false;
-  if (update) {
-    await updateManyProducts({
-      where: {
-        id: {
-          in: products.map((p) => p.id),
-        },
-      },
-      data: {
-        category: "OTHER",
-      },
-    });
-  }
-
-  return NextResponse.json({ result });
+  return NextResponse.json(testData);
 }
