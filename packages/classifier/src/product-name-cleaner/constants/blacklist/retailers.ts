@@ -8,4 +8,5 @@ export const retailers: string[] = [
   "aceshop",
   "spinnvill",
   "frisbeesor.no",
+  "golfkongen",
 ];

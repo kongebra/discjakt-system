@@ -8,14 +8,21 @@ export const plastics: string[] = [
   "neo",
   "primal run",
   "special blend",
+  "active premium",
+  "active",
+  "lux vapor",
+  "horizon",
 
   // innova
+  "halo star",
+  "blizzard champion",
   "champion",
   "dx",
   "xt",
 
   // yikun
   "dragon line",
+  "phoenix line",
 
   // latitude 64
   "zero soft",
@@ -28,6 +35,7 @@ export const plastics: string[] = [
   "grand",
   "opto x",
   "opto-x",
+  "glimmer",
   "opto air",
   "opto-air",
   "opto ice",
@@ -40,14 +48,24 @@ export const plastics: string[] = [
   "gold ice",
   "biogold",
   "frost",
+  "zero burst",
 
   // kastaplast
+  "k1 soft",
+  "k1-soft",
+  "k1 glow",
+  "k1-glow",
+  "k3 hard",
+  "k3-hard",
   "k1",
+  "k3",
 
   // discraft
   "z line",
   "z-line",
   "big z",
+  "jawbreaker",
+  "flx",
   // "esp", // cannot be in this
 
   // dynamic discs
@@ -89,11 +107,20 @@ export const plastics: string[] = [
   "electron",
   "airbon",
   "neutron",
+  "simon line",
+  "simon-line",
+  "eclipse",
 
   // axiom
   "fission",
+  "total eclipse",
 
   // prodegy
+  "500G",
+  "400G",
+  "300G",
+  "750",
+  "700",
   "500",
   "400",
   "300",
@@ -117,9 +144,22 @@ export const plastics: string[] = [
   // ev-7
   "og firm",
   "og-firm",
+  "og soft",
+  "og-soft",
 
   // legacy
   "protege",
+
+  // infinite discs
+  "c-blend",
+  "i-blend",
+
+  // clash
+  "steady",
+
+  // guru
+  "glacier line",
+  "glacier-line",
 
   // general
   "classic",
@@ -130,4 +170,8 @@ export const plastics: string[] = [
   "soft",
   "hard",
   "plastic",
+  "x-out",
+  "metal flake",
+  "firm",
+  "zero",
 ];

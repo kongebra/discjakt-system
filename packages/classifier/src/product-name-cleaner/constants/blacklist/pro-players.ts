@@ -110,6 +110,7 @@ export const proPlayers: string[] = [
   "David Feldberg",
   "gavin rathbun",
   "gavin ratburn",
+  "kylie klein",
 
   // FPO names
   "Kristin Tattar",
@@ -189,6 +190,10 @@ export const proPlayers: string[] = [
   "Chelsea Howells",
   "Karissa Dedmon",
   "Heather Young",
+  "elaine king",
 
   "Manabu Kajiyama",
+
+  // last names only
+  "mcbeth",
 ];
