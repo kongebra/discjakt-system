@@ -1,0 +1,1 @@
+export { classifyProduct } from "./classifier";

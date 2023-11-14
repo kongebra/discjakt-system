@@ -17,23 +17,14 @@ export async function GET(req: Request) {
           equals: "DISC",
         },
       },
-      select: {
-        id: true,
-        name: true,
-        disc: {
-          select: {
-            slug: true,
-          },
-        },
+      take: 64,
+      orderBy: {
+        lastmod: "desc",
       },
     }),
   ]);
 
-  const testData = products.map((product) => [
-    product.name,
-    [(product as any).disc?.slug],
-    product.id,
-  ]);
+  const testData = products.map((product) => [product.name, product.disc_slug]);
 
   return NextResponse.json(testData);
 }
