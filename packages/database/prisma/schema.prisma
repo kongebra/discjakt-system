@@ -117,16 +117,18 @@ model Product {
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
 
-    name        String
-    description String?
-    image_url   String?
-    url         String  @unique
-    lastmod     String?
-    priority    String?
-
-    meta_title       String?
-    meta_description String?
-    meta_keywords    String?
+    name          String
+    description   String?
+    image_url     String?
+    url           String  @unique
+    lastmod       String?
+    priority      String?
+    brand         String?
+    meta_category String?
+    speed         Float   @default(0)
+    glide         Float   @default(0)
+    turn          Float   @default(0)
+    fade          Float   @default(0)
 
     retailer      Retailer @relation(fields: [retailer_slug], references: [slug])
     retailer_slug String
@@ -151,6 +153,7 @@ model PriceHistory {
     original_price Float
     in_stock       Boolean
     is_promotion   Boolean @default(false)
+    quantity       Int     @default(0)
 
     created_at DateTime @default(now())
 
