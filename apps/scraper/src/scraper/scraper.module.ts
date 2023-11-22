@@ -8,6 +8,7 @@ import { ScraperController } from './scraper.controller';
 import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.service';
 import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
 import { ProdiscService } from './prodisc/prodisc.service';
+import { GolfkongenService } from './golfkongen/golfkongen.service';
 
 @Module({
   imports: [CoreModule, UtilsModule],
@@ -18,6 +19,7 @@ import { ProdiscService } from './prodisc/prodisc.service';
     WeAreDiscGolfService,
     KrokholdgsService,
     ProdiscService,
+    GolfkongenService,
   ],
   exports: [ScraperService],
   controllers: [ScraperController],
