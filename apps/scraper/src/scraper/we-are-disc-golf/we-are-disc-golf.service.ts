@@ -10,7 +10,7 @@ export class WeAreDiscGolfService
 {
   config: IScraperConfig = {
     baseUrl: 'https://wearediscgolf.no',
-    crawlDelay: 1,
+    crawlDelay: 3,
     domain: 'wearediscgolf.no',
     name: 'we-are-disc-golf',
     selectors: {
@@ -97,13 +97,13 @@ export class WeAreDiscGolfService
     }
 
     result.data.speed =
-      parseInt($(this.config.selectors.speed).first().text().trim(), 10) || 0;
+      parseFloat($(this.config.selectors.speed).first().text().trim()) || 0;
     result.data.glide =
-      parseInt($(this.config.selectors.glide).first().text().trim(), 10) || 0;
+      parseFloat($(this.config.selectors.glide).first().text().trim()) || 0;
     result.data.turn =
-      parseInt($(this.config.selectors.turn).first().text().trim(), 10) || 0;
+      parseFloat($(this.config.selectors.turn).first().text().trim()) || 0;
     result.data.fade =
-      parseInt($(this.config.selectors.fade).first().text().trim(), 10) || 0;
+      parseFloat($(this.config.selectors.fade).first().text().trim()) || 0;
 
     return result;
   }

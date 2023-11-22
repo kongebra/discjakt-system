@@ -3,6 +3,8 @@ import { AceshopService } from './aceshop/aceshop.service';
 import { IScraper, IScraperConfig, ScrapeResult } from './scraper.interface';
 import { FrisbeebutikkenService } from './frisbeebutikken/frisbeebutikken.service';
 import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.service';
+import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
+import { ProdiscService } from './prodisc/prodisc.service';
 
 @Injectable()
 export class ScraperService {
@@ -12,11 +14,15 @@ export class ScraperService {
     private readonly aceshop: AceshopService,
     private readonly frisbeebutikken: FrisbeebutikkenService,
     private readonly wearediscgolf: WeAreDiscGolfService,
+    private readonly krokholdgs: KrokholdgsService,
+    private readonly prodisc: ProdiscService,
   ) {
     this.scrapers = {
-      aceshop: this.aceshop,
-      frisbeebutikken: this.frisbeebutikken,
-      'we-are-disc-golf': this.wearediscgolf,
+      [this.aceshop.config.name]: this.aceshop,
+      [this.frisbeebutikken.config.name]: this.frisbeebutikken,
+      [this.wearediscgolf.config.name]: this.wearediscgolf,
+      [this.krokholdgs.config.name]: this.krokholdgs,
+      [this.prodisc.config.name]: this.prodisc,
     };
   }
 

@@ -7,10 +7,18 @@ import { FrisbeebutikkenService } from './frisbeebutikken/frisbeebutikken.servic
 import { ScraperController } from './scraper.controller';
 import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.service';
 import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
+import { ProdiscService } from './prodisc/prodisc.service';
 
 @Module({
   imports: [CoreModule, UtilsModule],
-  providers: [AceshopService, ScraperService, FrisbeebutikkenService, WeAreDiscGolfService, KrokholdgsService],
+  providers: [
+    AceshopService,
+    ScraperService,
+    FrisbeebutikkenService,
+    WeAreDiscGolfService,
+    KrokholdgsService,
+    ProdiscService,
+  ],
   exports: [ScraperService],
   controllers: [ScraperController],
 })

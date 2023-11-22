@@ -74,13 +74,8 @@ export class FrisbeebutikkenService
       .text()
       .trim();
     result.data.image = $(this.config.selectors.image).first().attr('src');
-
     [result.data.price, result.data.originalPrice] = this.parsePrice($);
-
     [result.data.inStock, result.data.quantity] = this.parseStock($);
-
-    // [result.data.speed, result.data.glide, result.data.turn, result.data.fade] =
-    //   this.parseStats($);
 
     return result;
   }
