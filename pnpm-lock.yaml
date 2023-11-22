@@ -47,6 +47,9 @@ importers:
       '@nestjs/schedule':
         specifier: ^4.0.0
         version: 4.0.0(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(reflect-metadata@0.1.13)
+      '@nestjs/swagger':
+        specifier: ^7.1.16
+        version: 7.1.16(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(reflect-metadata@0.1.13)
       '@opentelemetry/api':
         specifier: ^1.6.0
         version: 1.6.0
@@ -116,6 +119,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      tesseract.js:
+        specifier: ^5.0.3
+        version: 5.0.3
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -1769,6 +1775,23 @@ packages:
     transitivePeerDependencies:
       - encoding
 
+  /@nestjs/mapped-types@2.0.3(@nestjs/common@10.0.0)(reflect-metadata@0.1.13):
+    resolution: {integrity: sha512-40Zdqg98lqoF0+7ThWIZFStxgzisK6GG22+1ABO4kZiGF/Tu2FE+DYLw+Q9D94vcFWizJ+MSjNN4ns9r6hIGxw==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      class-transformer: ^0.4.0 || ^0.5.0
+      class-validator: ^0.13.0 || ^0.14.0
+      reflect-metadata: ^0.1.12
+    peerDependenciesMeta:
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.0.0(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      reflect-metadata: 0.1.13
+    dev: false
+
   /@nestjs/platform-express@10.0.0(@nestjs/common@10.0.0)(@nestjs/core@10.0.0):
     resolution: {integrity: sha512-jOQBPVpk7B4JFXZZwxHSsY6odIqZlea9CbqKzu/hfDyqRv+AwuJk5gprvvL6RpWAHNyRMH1r5/14bqcXD3+WGw==}
     peerDependencies:
@@ -1813,6 +1836,33 @@ packages:
     transitivePeerDependencies:
       - chokidar
     dev: true
+
+  /@nestjs/swagger@7.1.16(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(reflect-metadata@0.1.13):
+    resolution: {integrity: sha512-f9KBk/BX9MUKPTj7tQNYJ124wV/jP5W2lwWHLGwe/4qQXixuDOo39zP55HIJ44LE7S04B7BOeUOo9GBJD/vRcw==}
+    peerDependencies:
+      '@fastify/static': ^6.0.0
+      '@nestjs/common': ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^9.0.0 || ^10.0.0
+      class-transformer: '*'
+      class-validator: '*'
+      reflect-metadata: ^0.1.12
+    peerDependenciesMeta:
+      '@fastify/static':
+        optional: true
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.0.0(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.0.0(@nestjs/common@10.0.0)(@nestjs/platform-express@10.0.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/mapped-types': 2.0.3(@nestjs/common@10.0.0)(reflect-metadata@0.1.13)
+      js-yaml: 4.1.0
+      lodash: 4.17.21
+      path-to-regexp: 3.2.0
+      reflect-metadata: 0.1.13
+      swagger-ui-dist: 5.9.1
+    dev: false
 
   /@nestjs/testing@10.0.0(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(@nestjs/platform-express@10.0.0):
     resolution: {integrity: sha512-U5q3+svkddpdSk51ZFCEnFpQuWxAwE4ahsX77FrqqCAYidr7HUtL/BHYOVzI5H9vUH6BvJxMbfo3tiUXQl/2aA==}
@@ -5153,6 +5203,10 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
+  /bmp-js@0.1.0:
+    resolution: {integrity: sha512-vHdS19CnY3hwiNdkaqk93DvjVLfbEcI8mys4UjuWrlX1haDmroo8o4xCzh4wD6DGV6HxRCyauwhHRqMTfERtjw==}
+    dev: false
+
   /body-parser@1.20.1:
     resolution: {integrity: sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
@@ -7206,6 +7260,10 @@ packages:
     dependencies:
       safer-buffer: 2.1.2
 
+  /idb-keyval@6.2.1:
+    resolution: {integrity: sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==}
+    dev: false
+
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
     dev: true
@@ -7406,6 +7464,10 @@ packages:
     hasBin: true
     dev: true
 
+  /is-electron@2.2.2:
+    resolution: {integrity: sha512-FO/Rhvz5tuw4MCWkpMzHFKWD2LsfHzIb7i6MdPYZ/KW7AlxawyLkqdy+jPZP1WubqEADE3O4FUENlJHDfQASRg==}
+    dev: false
+
   /is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -7528,6 +7590,10 @@ packages:
     resolution: {integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==}
     engines: {node: '>=10'}
     dev: true
+
+  /is-url@1.2.4:
+    resolution: {integrity: sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==}
+    dev: false
 
   /is-weakmap@2.0.1:
     resolution: {integrity: sha512-NSBR4kH5oVj1Uwvv970ruUkCV7O1mzgVFO4/rev2cLRda9Tm9HrL70ZPut4rOHgY0FNrUu9BCbXA2sdQ+x0chA==}
@@ -9015,6 +9081,11 @@ packages:
       is-wsl: 2.2.0
     dev: true
 
+  /opencollective-postinstall@2.0.3:
+    resolution: {integrity: sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==}
+    hasBin: true
+    dev: false
+
   /openid-client@5.6.1:
     resolution: {integrity: sha512-PtrWsY+dXg6y8mtMPyL/namZSYVz8pjXz3yJiBNZsEdCnu9miHLB4ELVC85WvneMKo2Rg62Ay7NkuCpM0bgiLQ==}
     dependencies:
@@ -10267,6 +10338,10 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  /swagger-ui-dist@5.9.1:
+    resolution: {integrity: sha512-5zAx+hUwJb9T3EAntc7TqYkV716CMqG6sZpNlAAMOMWkNXRYxGkN8ADIvD55dQZ10LxN90ZM/TQmN7y1gpICnw==}
+    dev: false
+
   /sylvester@0.0.12:
     resolution: {integrity: sha512-SzRP5LQ6Ts2G5NyAa/jg16s8e3R7rfdFjizy1zeoecYWw+nGL+YA1xZvW/+iJmidBGSdLkuvdwTYEyJEb+EiUw==}
     engines: {node: '>=0.2.6'}
@@ -10399,6 +10474,28 @@ packages:
       commander: 2.20.3
       source-map-support: 0.5.21
     dev: true
+
+  /tesseract.js-core@5.0.0:
+    resolution: {integrity: sha512-lJur5LzjinW5VYMKlVNnBU2JPLpO+A9VqAYBeuV+ZgH0hKvsnm+536Yyp+/zRTBdLe7D6Kok0FN9g+TE4J8qGA==}
+    dev: false
+
+  /tesseract.js@5.0.3:
+    resolution: {integrity: sha512-UcEaIRQ+KSjxl57SS2WQgnac8hON0uJgqR6418MYLBeFPGqrAooNwcKVIoSVCzflO3CxTKPg5Ic7z7JuW7wOGA==}
+    requiresBuild: true
+    dependencies:
+      bmp-js: 0.1.0
+      idb-keyval: 6.2.1
+      is-electron: 2.2.2
+      is-url: 1.2.4
+      node-fetch: 2.7.0
+      opencollective-postinstall: 2.0.3
+      regenerator-runtime: 0.13.11
+      tesseract.js-core: 5.0.0
+      wasm-feature-detect: 1.6.1
+      zlibjs: 0.3.1
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -10974,6 +11071,10 @@ packages:
       makeerror: 1.0.12
     dev: true
 
+  /wasm-feature-detect@1.6.1:
+    resolution: {integrity: sha512-R1i9ED8UlLu/foILNB1ck9XS63vdtqU/tP1MCugVekETp/ySCrBZRk5I/zI67cI1wlQYeSonNm1PLjDHZDNg6g==}
+    dev: false
+
   /watchpack@2.4.0:
     resolution: {integrity: sha512-Lcvm7MGST/4fup+ifyKi2hjyIAwcdI4HRgtvTpIUxBRhB+RFtUh8XtDOxUfctVCnhVi+QQj49i91OyvzkJl6cg==}
     engines: {node: '>=10.13.0'}
@@ -11265,6 +11366,10 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zlibjs@0.3.1:
+    resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
+    dev: false
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}

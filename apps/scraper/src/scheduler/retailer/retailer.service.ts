@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
+import { Product } from 'database';
 import { PrismaService } from '../../core/prisma/prisma.service';
 import { TracerService } from '../../core/tracer/tracer.service';
 import { ScraperService } from '../../scraper/scraper.service';
 import { SitemapService } from '../../sitemap/sitemap.service';
-import { Product } from 'database';
-import { SitemapItem } from 'src/sitemap/types';
+import { SitemapItem } from '../../sitemap/types';
+import { QueueService } from '../../queue/queue.service';
 
 @Injectable()
 export class RetailerService {
@@ -16,9 +17,10 @@ export class RetailerService {
     private readonly prisma: PrismaService,
     private readonly sitemap: SitemapService,
     private readonly scraper: ScraperService,
+    private readonly queue: QueueService,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  // @Cron(CronExpression.EVERY_5_MINUTES)
   async frequentScrape() {
     this.tracer.startActiveSpan(
       'RetailerService.frequentScrape',
@@ -26,6 +28,9 @@ export class RetailerService {
         try {
           // Fetch retailer, their products, and update the retailer's updated_at timestamp
           const retailer = await this.findLatestUpdatedRetailer();
+
+          this.logger.debug(`Starting frequent scrape for ${retailer.slug}`);
+
           const products = await this.prisma.product.findMany({
             where: {
               retailer_slug: retailer.slug,
@@ -56,17 +61,16 @@ export class RetailerService {
           });
 
           // Store tasks for creating and updating products
-          const createTasks: SitemapItem[] = [];
-          const updateTasks: SitemapItem[] = [];
+          const tasks: SitemapItem[] = [];
 
           // Loop through sitemap items and compare with existing products
           for (const item of items) {
             const exists = productMap.get(item.loc);
             if (!exists) {
-              createTasks.push(item);
+              tasks.push(item);
             } else {
               if (exists.lastmod !== item.lastmod) {
-                updateTasks.push(item);
+                tasks.push(item);
               }
             }
           }
@@ -74,43 +78,18 @@ export class RetailerService {
           const scraperConfig = this.scraper.getConfig(retailer.slug);
           const crawlDelay = scraperConfig?.crawlDelay || 1; // in seconds
 
-          for (const item of createTasks) {
-            // TODO: Implement crawl delay
-            const result = await this.scraper.scrape(retailer.slug, item.loc);
+          this.logger.debug(`Found ${tasks.length} tasks for ${retailer.slug}`);
 
-            this.prisma.product.create({
-              data: {
-                name: result.data.name,
-                url: item.loc,
-                image_url: result.data.image,
-                brand: result.data.brand,
-                meta_category: result.data.category,
-                speed: result.data.speed,
-                glide: result.data.glide,
-                turn: result.data.turn,
-                fade: result.data.fade,
-
-                retailer_slug: retailer.slug,
-
-                price_history: {
-                  create: [
-                    {
-                      current_price: result.data.price,
-                      original_price: result.data.originalPrice,
-                      in_stock: result.data.inStock,
-                      quantity: result.data.quantity,
-                      is_promotion:
-                        result.data.price < result.data.originalPrice,
-                    },
-                  ],
-                },
-              },
+          for (const item of tasks) {
+            this.queue.enqueueScrapeJob({
+              crawlDelay,
+              retailerSlug: retailer.slug,
+              sitemapItem: item,
             });
           }
 
           span.setAttributes({
-            'scheduler.createTasks.length': createTasks.length,
-            'scheduler.updateTasks.length': updateTasks.length,
+            'scheduler.tasks.length': tasks.length,
           });
         } catch (err) {
           span.setAttributes({
@@ -127,6 +106,9 @@ export class RetailerService {
 
   private async findLatestUpdatedRetailer() {
     return await this.prisma.retailer.findFirst({
+      where: {
+        slug: 'aceshop',
+      },
       orderBy: {
         updated_at: 'asc',
       },
@@ -142,5 +124,9 @@ export class RetailerService {
         updated_at: new Date(),
       },
     });
+  }
+
+  private delay(seconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
   }
 }

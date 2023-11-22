@@ -1,13 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { AceshopService } from './aceshop/aceshop.service';
 import { IScraper, IScraperConfig, ScrapeResult } from './scraper.interface';
+import { FrisbeebutikkenService } from './frisbeebutikken/frisbeebutikken.service';
+import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.service';
 
 @Injectable()
 export class ScraperService {
-  private readonly scrapers: Record<string, IScraper> = {};
+  private readonly scrapers: Record<string, IScraper>;
 
-  constructor(private readonly aceshop: AceshopService) {
-    this.scrapers[aceshop.config.name] = aceshop;
+  constructor(
+    private readonly aceshop: AceshopService,
+    private readonly frisbeebutikken: FrisbeebutikkenService,
+    private readonly wearediscgolf: WeAreDiscGolfService,
+  ) {
+    this.scrapers = {
+      aceshop: this.aceshop,
+      frisbeebutikken: this.frisbeebutikken,
+      'we-are-disc-golf': this.wearediscgolf,
+    };
   }
 
   public async scrape(

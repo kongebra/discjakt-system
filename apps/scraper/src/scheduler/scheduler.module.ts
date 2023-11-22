@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { CoreModule } from 'src/core/core.module';
-import { UtilsModule } from 'src/utils/utils.module';
+import { CoreModule } from '../core/core.module';
+import { QueueModule } from '../queue/queue.module';
+import { ScraperModule } from '../scraper/scraper.module';
+import { SitemapModule } from '../sitemap/sitemap.module';
+import { UtilsModule } from '../utils/utils.module';
 import { RetailerService } from './retailer/retailer.service';
-import { ScraperModule } from 'src/scraper/scraper.module';
-import { SitemapModule } from 'src/sitemap/sitemap.module';
+import { SchedulerController } from './scheduler.controller';
 
 @Module({
   imports: [
@@ -13,7 +15,9 @@ import { SitemapModule } from 'src/sitemap/sitemap.module';
     UtilsModule,
     SitemapModule,
     ScraperModule,
+    QueueModule,
   ],
   providers: [RetailerService],
+  controllers: [SchedulerController],
 })
 export class SchedulerModule {}
