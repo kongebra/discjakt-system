@@ -9,6 +9,7 @@ import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.servic
 import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
 import { ProdiscService } from './prodisc/prodisc.service';
 import { GolfkongenService } from './golfkongen/golfkongen.service';
+import { FrisbeeSorService } from './frisbee-sor/frisbee-sor.service';
 
 @Module({
   imports: [CoreModule, UtilsModule],
@@ -20,6 +21,7 @@ import { GolfkongenService } from './golfkongen/golfkongen.service';
     KrokholdgsService,
     ProdiscService,
     GolfkongenService,
+    FrisbeeSorService,
   ],
   exports: [ScraperService],
   controllers: [ScraperController],

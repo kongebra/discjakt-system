@@ -6,6 +6,7 @@ import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.servic
 import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
 import { ProdiscService } from './prodisc/prodisc.service';
 import { GolfkongenService } from './golfkongen/golfkongen.service';
+import { FrisbeeSorService } from './frisbee-sor/frisbee-sor.service';
 
 @Injectable()
 export class ScraperService {
@@ -18,6 +19,7 @@ export class ScraperService {
     private readonly krokholdgs: KrokholdgsService,
     private readonly prodisc: ProdiscService,
     private readonly golfkongen: GolfkongenService,
+    private readonly frisbeeSor: FrisbeeSorService,
   ) {
     this.scrapers = {
       [this.aceshop.config.name]: this.aceshop,
@@ -26,6 +28,7 @@ export class ScraperService {
       [this.krokholdgs.config.name]: this.krokholdgs,
       [this.prodisc.config.name]: this.prodisc,
       [this.golfkongen.config.name]: this.golfkongen,
+      [this.frisbeeSor.config.name]: this.frisbeeSor,
     };
   }
 
