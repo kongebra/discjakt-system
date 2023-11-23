@@ -21,6 +21,9 @@ export class FrisbeeSorService extends BaseScraperService implements IScraper {
 
   public async scrape(url: string): Promise<ScrapeResult> {
     const [$, result] = await this.fetch(url);
+    if ($ === null) {
+      return result;
+    }
 
     result.data.name = $(this.config.selectors.name).text().trim();
     result.data.image = $(this.config.selectors.image).first().attr('src');

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { IScraper, IScraperConfig, ScrapeResult } from '../scraper.interface';
+import { CheerioAPI } from 'cheerio';
 import { BaseScraperService } from '../base-scraper.service';
-import { CheerioAPI, load } from 'cheerio';
+import { IScraper, IScraperConfig, ScrapeResult } from '../scraper.interface';
 
 @Injectable()
 export class AceshopService extends BaseScraperService implements IScraper {
@@ -24,47 +24,10 @@ export class AceshopService extends BaseScraperService implements IScraper {
   };
 
   async scrape(url: string): Promise<ScrapeResult> {
-    const response = await this.http.axiosRef.get(url, {
-      headers: {
-        'User-Agent': 'DiscjaktBot',
-      },
-    });
-
-    const result: ScrapeResult = {
-      data: {
-        url,
-        retailerSlug: 'aceshop',
-
-        name: '',
-        image: '',
-        inStock: false,
-        quantity: 0,
-        brand: '',
-        category: '',
-        price: 0,
-        originalPrice: 0,
-        speed: 0,
-        glide: 0,
-        turn: 0,
-        fade: 0,
-      },
-
-      meta: {
-        url,
-        retailerSlug: 'aceshop',
-        scraperName: this.config.name,
-        scrapedAt: new Date(),
-        httpStatus: response.status,
-        httpStatusText: response.statusText,
-      },
-    };
-
-    if (response.status !== 200) {
+    const [$, result] = await this.fetch(url);
+    if ($ === null) {
       return result;
     }
-
-    const html = response.data;
-    const $ = load(html);
 
     result.data.name = $(this.config.selectors.name).first().text().trim();
     result.data.brand = $(this.config.selectors.brand).first().text().trim();
