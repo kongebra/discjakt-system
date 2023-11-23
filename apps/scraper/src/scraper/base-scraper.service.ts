@@ -19,49 +19,70 @@ export abstract class BaseScraperService {
     url: string,
     encoding: 'utf8' | 'latin1' = 'utf8',
   ): Promise<[CheerioAPI, ScrapeResult]> {
-    const response = await this.http.axiosRef.get(url, {
-      responseType: 'arraybuffer',
-      headers: {
-        'User-Agent': 'DiscjaktBot',
-      },
+    return this.tracer.startActiveSpan('base-scraper.fetch', async (span) => {
+      try {
+        const response = await this.http.axiosRef.get(url, {
+          responseType: 'arraybuffer',
+          headers: {
+            'User-Agent': 'DiscjaktBot',
+          },
+        });
+
+        const result: ScrapeResult = {
+          data: {
+            url,
+            retailerSlug: this.config.name,
+
+            name: '',
+            image: '',
+            inStock: false,
+            quantity: 0,
+            brand: '',
+            category: '',
+            price: 0,
+            originalPrice: 0,
+            speed: 0,
+            glide: 0,
+            turn: 0,
+            fade: 0,
+          },
+
+          meta: {
+            url,
+            retailerSlug: this.config.name,
+            scraperName: this.config.name,
+            scrapedAt: new Date(),
+            httpStatus: response.status,
+            httpStatusText: response.statusText,
+          },
+        };
+
+        span.setAttributes({
+          'http.url': url,
+          'http.response.status': response.status,
+          'http.response.statusText': response.statusText,
+          'scraper.name': this.config.name,
+        });
+
+        if (response.status !== 200) {
+          return [null, result] as [CheerioAPI, ScrapeResult];
+        }
+
+        const html = response.data.toString(encoding);
+        const $ = load(html);
+
+        return [$, result] as [CheerioAPI, ScrapeResult];
+      } catch (err) {
+        span.setAttributes({
+          'error.type': err.name,
+          'error.message': err.message,
+          'error.stack': err.stack,
+        });
+
+        throw err;
+      } finally {
+        span.end();
+      }
     });
-
-    const result: ScrapeResult = {
-      data: {
-        url,
-        retailerSlug: this.config.name,
-
-        name: '',
-        image: '',
-        inStock: false,
-        quantity: 0,
-        brand: '',
-        category: '',
-        price: 0,
-        originalPrice: 0,
-        speed: 0,
-        glide: 0,
-        turn: 0,
-        fade: 0,
-      },
-
-      meta: {
-        url,
-        retailerSlug: this.config.name,
-        scraperName: this.config.name,
-        scrapedAt: new Date(),
-        httpStatus: response.status,
-        httpStatusText: response.statusText,
-      },
-    };
-
-    if (response.status !== 200) {
-      return [null, result];
-    }
-
-    const html = response.data.toString(encoding);
-    const $ = load(html);
-
-    return [$, result];
   }
 }
