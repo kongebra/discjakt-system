@@ -1,16 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapeAceshopService } from './scrape-aceshop.service';
 import { BullModule } from '@nestjs/bull';
+import { Test, TestingModule } from '@nestjs/testing';
 import { CoreModule } from '../../core/core.module';
 import { ScraperModule } from '../../scraper/scraper.module';
 import { UtilsModule } from '../../utils/utils.module';
+import { AceshopQueueService } from './aceshop-queue.service';
 
-describe('ScrapeAceshopService', () => {
-  let service: ScrapeAceshopService;
+describe('AceshopQueueService', () => {
+  let service: AceshopQueueService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScrapeAceshopService],
+      providers: [AceshopQueueService],
       imports: [
         CoreModule,
         UtilsModule,
@@ -28,7 +28,7 @@ describe('ScrapeAceshopService', () => {
       ],
     }).compile();
 
-    service = module.get<ScrapeAceshopService>(ScrapeAceshopService);
+    service = module.get<AceshopQueueService>(AceshopQueueService);
   });
 
   it('should be defined', () => {

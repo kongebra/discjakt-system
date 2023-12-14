@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { CoreModule } from '../core/core.module';
 import { ScraperModule } from '../scraper/scraper.module';
 import { UtilsModule } from '../utils/utils.module';
-import { BaseQueueScraperService } from './base-queue-scraper/base-queue-scraper.service';
+import { AceshopQueueService } from './aceshop-queue/aceshop-queue.service';
+import { BaseQueueService } from './base-queue/base-queue.service';
 import { QUEUE_CONFIG } from './queue.config';
 import { QueueService } from './queue.service';
-import { ScrapeAceshopService } from './scrape-aceshop/scrape-aceshop.service';
 
 if (!process.env.REDISHOST) {
   throw new Error('Missing REDISHOST environment variable');
@@ -35,7 +35,7 @@ if (!process.env.REDISPASSWORD) {
     }),
     BullModule.registerQueue(
       ...QUEUE_CONFIG.map((config) => ({
-        name: `scrape-${config.retailerSlug}`,
+        name: `${config.retailerSlug}-queue`,
         limiter: {
           max: 1,
           duration: config.crawlDelay * 1000,
@@ -43,7 +43,7 @@ if (!process.env.REDISPASSWORD) {
       })),
     ),
   ],
-  providers: [ScrapeAceshopService, QueueService, BaseQueueScraperService],
+  providers: [QueueService, BaseQueueService, AceshopQueueService],
   exports: [QueueService],
 })
 export class QueueModule {}

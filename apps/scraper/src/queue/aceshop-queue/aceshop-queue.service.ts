@@ -1,10 +1,10 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { BaseQueueScraperService } from '../base-queue-scraper/base-queue-scraper.service';
+import { BaseQueueService } from '../base-queue/base-queue.service';
 import { ScrapeJob } from '../queue.interface';
 
-@Processor('scrape-aceshop')
-export class ScrapeAceshopService extends BaseQueueScraperService {
+@Processor('aceshop-queue')
+export class AceshopQueueService extends BaseQueueService {
   @Process('scrape')
   async handleScrapeJob(job: Job<ScrapeJob>) {
     return this.tracer.startActiveSpan(

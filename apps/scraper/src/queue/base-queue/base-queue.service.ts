@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Attributes } from '@opentelemetry/api';
+import { Job } from 'bull';
 import { PrismaService } from '../../core/prisma/prisma.service';
 import { TracerService } from '../../core/tracer/tracer.service';
 import { ScrapeResult } from '../../scraper/scraper.interface';
 import { ScraperService } from '../../scraper/scraper.service';
-import { Job } from 'bull';
 import { ScrapeJob } from '../queue.interface';
 
 @Injectable()
-export class BaseQueueScraperService {
+export class BaseQueueService {
   constructor(
     protected readonly tracer: TracerService,
     protected readonly scraper: ScraperService,
@@ -20,7 +20,7 @@ export class BaseQueueScraperService {
     job: Job<ScrapeJob>,
   ): Promise<ScrapeResult> {
     return this.tracer.startActiveSpan(
-      'BaseQueueScraperService.scrape',
+      `${retailerSlug}Queue.scrape`,
       async (span) => {
         span.setAttributes({
           'scraper.retailer.slug': retailerSlug,

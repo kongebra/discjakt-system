@@ -10,11 +10,11 @@ export class QueueService {
 
   constructor(
     private readonly tracer: TracerService,
-    @InjectQueue('scrape-aceshop')
-    private readonly scrapeAceshopQueue: Queue<ScrapeJob>,
+    @InjectQueue('aceshop-queue')
+    private readonly aceshop: Queue<ScrapeJob>,
   ) {
     this.scraperQueues = {
-      aceshop: scrapeAceshopQueue,
+      aceshop,
     };
   }
 

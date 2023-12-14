@@ -7,6 +7,7 @@ import { ScraperService } from '../../scraper/scraper.service';
 import { SitemapService } from '../../sitemap/sitemap.service';
 import { SitemapItem } from '../../sitemap/types';
 import { QueueService } from '../../queue/queue.service';
+import { QUEUE_CONFIG } from 'src/queue/queue.config';
 
 @Injectable()
 export class RetailerService {
@@ -105,9 +106,13 @@ export class RetailerService {
   }
 
   private async findLatestUpdatedRetailer() {
+    const slugs = QUEUE_CONFIG.map((config) => config.retailerSlug);
+
     return await this.prisma.retailer.findFirst({
       where: {
-        slug: 'aceshop',
+        slug: {
+          in: slugs,
+        },
       },
       orderBy: {
         updated_at: 'asc',
