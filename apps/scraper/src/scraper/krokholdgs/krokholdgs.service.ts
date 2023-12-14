@@ -69,7 +69,7 @@ export class KrokholdgsService extends BaseScraperService implements IScraper {
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('krokholdgs.parseStock', () => {
+    return this.tracer.startActiveSpan('krokholdgs.parseStock', (span) => {
       const inStockText = $(this.config.selectors.inStock)
         .first()
         .text()
@@ -78,14 +78,18 @@ export class KrokholdgsService extends BaseScraperService implements IScraper {
       const inStock = inStockText.toLowerCase().includes('på lager');
       const quantity = parseInt(inStockText.split(' ')[0]);
 
+      span.end();
+
       return [inStock, quantity] as [boolean, number];
     });
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('krokholdgs.parsePrice', () => {
+    return this.tracer.startActiveSpan('krokholdgs.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const price = this.priceParser.parse(priceStr);
+
+      span.end();
 
       return [price, price] as [number, number];
     });

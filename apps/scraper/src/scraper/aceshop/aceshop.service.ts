@@ -82,7 +82,7 @@ export class AceshopService extends BaseScraperService implements IScraper {
   }
 
   private parseStats($: CheerioAPI): [number, number, number, number] {
-    return this.tracer.startActiveSpan('aceshop.parseStats', () => {
+    return this.tracer.startActiveSpan('aceshop.parseStats', (span) => {
       let speed = 0,
         glide = 0,
         turn = 0,
@@ -114,12 +114,14 @@ export class AceshopService extends BaseScraperService implements IScraper {
         }
       });
 
+      span.end();
+
       return [speed, glide, turn, fade] as [number, number, number, number];
     });
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('aceshop.parsePrice', () => {
+    return this.tracer.startActiveSpan('aceshop.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const originalPriceStr = $(this.config.selectors.originalPrice)
         .first()
@@ -129,8 +131,12 @@ export class AceshopService extends BaseScraperService implements IScraper {
       if (!originalPriceStr) {
         const price = this.priceParser.parse(priceStr);
 
+        span.end();
+
         return [price, price] as [number, number];
       }
+
+      span.end();
 
       return [
         this.priceParser.parse(priceStr),
@@ -140,18 +146,24 @@ export class AceshopService extends BaseScraperService implements IScraper {
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('aceshop.parseStock', () => {
+    return this.tracer.startActiveSpan('aceshop.parseStock', (span) => {
       const stockText = $(this.config.selectors.inStock).first().text().trim();
 
       const parts = stockText.split(':');
       if (parts.length < 2) {
+        span.end();
+
         return [false, 0] as [boolean, number];
       }
 
       const quantity = parseInt(parts[1].trim(), 10);
       if (isNaN(quantity)) {
+        span.end();
+
         return [false, 0] as [boolean, number];
       }
+
+      span.end();
 
       return [quantity > 0, quantity] as [boolean, number];
     });

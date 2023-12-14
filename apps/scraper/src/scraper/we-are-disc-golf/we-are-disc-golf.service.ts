@@ -111,49 +111,60 @@ export class WeAreDiscGolfService
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('we-are-disc-golf.parsePrice', () => {
-      let priceStr, originalPriceStr;
+    return this.tracer.startActiveSpan(
+      'we-are-disc-golf.parsePrice',
+      (span) => {
+        let priceStr, originalPriceStr;
 
-      // Check if the product is on sale (both originalPrice and price exist)
-      if (
-        $(this.config.selectors.originalPrice).length &&
-        $(this.config.selectors.price).length
-      ) {
-        originalPriceStr = $(this.config.selectors.originalPrice)
-          .first()
-          .text()
-          .trim();
-        priceStr = $(this.config.selectors.price).first().text().trim();
-      } else {
-        // Product is not on sale, use the normal price element for both price and originalPrice
-        priceStr = $('p.price .woocommerce-Price-amount.amount')
-          .first()
-          .text()
-          .trim();
-        originalPriceStr = priceStr;
-      }
+        // Check if the product is on sale (both originalPrice and price exist)
+        if (
+          $(this.config.selectors.originalPrice).length &&
+          $(this.config.selectors.price).length
+        ) {
+          originalPriceStr = $(this.config.selectors.originalPrice)
+            .first()
+            .text()
+            .trim();
+          priceStr = $(this.config.selectors.price).first().text().trim();
+        } else {
+          // Product is not on sale, use the normal price element for both price and originalPrice
+          priceStr = $('p.price .woocommerce-Price-amount.amount')
+            .first()
+            .text()
+            .trim();
+          originalPriceStr = priceStr;
+        }
 
-      // Assuming you have a method `priceParser.parse` that handles string to number conversion
-      const price = priceStr ? this.priceParser.parse(priceStr) : 0;
-      const originalPrice = originalPriceStr
-        ? this.priceParser.parse(originalPriceStr)
-        : price;
+        // Assuming you have a method `priceParser.parse` that handles string to number conversion
+        const price = priceStr ? this.priceParser.parse(priceStr) : 0;
+        const originalPrice = originalPriceStr
+          ? this.priceParser.parse(originalPriceStr)
+          : price;
 
-      return [price, originalPrice] as [number, number];
-    });
+        span.end();
+
+        return [price, originalPrice] as [number, number];
+      },
+    );
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('we-are-disc-golf.parseStock', () => {
-      const quantity = $(this.config.selectors.quantity).length;
+    return this.tracer.startActiveSpan(
+      'we-are-disc-golf.parseStock',
+      (span) => {
+        const quantity = $(this.config.selectors.quantity).length;
 
-      const outOfStockText = $('.stock.out-of-stock').text();
+        const outOfStockText = $('.stock.out-of-stock').text();
 
-      if (outOfStockText.length > 0) {
-        return [false, 0] as [boolean, number];
-      }
+        if (outOfStockText.length > 0) {
+          span.end();
+          return [false, 0] as [boolean, number];
+        }
 
-      return [quantity > 0, quantity] as [boolean, number];
-    });
+        span.end();
+
+        return [quantity > 0, quantity] as [boolean, number];
+      },
+    );
   }
 }

@@ -84,7 +84,7 @@ export class FrisbeebutikkenService
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('frisbeebutikken.parsePrice', () => {
+    return this.tracer.startActiveSpan('frisbeebutikken.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const originalPriceStr = $(this.config.selectors.originalPrice)
         .first()
@@ -93,10 +93,11 @@ export class FrisbeebutikkenService
 
       if (!originalPriceStr) {
         const price = this.priceParser.parse(priceStr);
-
+        span.end();
         return [price, price] as [number, number];
       }
 
+      span.end();
       return [
         this.priceParser.parse(priceStr),
         this.priceParser.parse(originalPriceStr),
@@ -105,19 +106,22 @@ export class FrisbeebutikkenService
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('frisbeebutikken.parseStock', () => {
+    return this.tracer.startActiveSpan('frisbeebutikken.parseStock', (span) => {
       const stockText = $(this.config.selectors.inStock).first().text().trim();
 
       const parts = stockText.split(':');
       if (parts.length < 2) {
+        span.end();
         return [false, 0] as [boolean, number];
       }
 
       const quantity = parseInt(parts[1].trim(), 10);
       if (isNaN(quantity)) {
+        span.end();
         return [false, 0] as [boolean, number];
       }
 
+      span.end();
       return [quantity > 0, quantity] as [boolean, number];
     });
   }

@@ -85,7 +85,7 @@ export class FrisbeeSorService extends BaseScraperService implements IScraper {
   private parseBrandAndCategory($: CheerioAPI): [string, string] {
     return this.tracer.startActiveSpan(
       'frisbee-sor.parseBrandAndCategory',
-      () => {
+      (span) => {
         let brand = '',
           category = '';
 
@@ -103,50 +103,57 @@ export class FrisbeeSorService extends BaseScraperService implements IScraper {
 
         category = categories.join(',');
 
+        span.end();
+
         return [brand, category] as [string, string];
       },
     );
   }
 
   private parseFlightRatings($: CheerioAPI): [number, number, number, number] {
-    return this.tracer.startActiveSpan('frisbee-sor.parseFlightRatings', () => {
-      let speed = 0,
-        glide = 0,
-        turn = 0,
-        fade = 0;
+    return this.tracer.startActiveSpan(
+      'frisbee-sor.parseFlightRatings',
+      (span) => {
+        let speed = 0,
+          glide = 0,
+          turn = 0,
+          fade = 0;
 
-      const description = $('.woocommerce-Tabs-panel--description')
-        .text()
-        .trim();
+        const description = $('.woocommerce-Tabs-panel--description')
+          .text()
+          .trim();
 
-      // Adjusted regular expressions for each flight spec
-      const speedRegex = /Speed:?\s*(\d+(?:,\d+)?)/;
-      const glideRegex = /Glide:?\s*(\d+(?:,\d+)?)/;
-      const turnRegex = /Turn:?\s*(-?\d+(?:,\d+)?)/;
-      const fadeRegex = /Fade:?\s*(-?\d+(?:,\d+)?)/;
+        // Adjusted regular expressions for each flight spec
+        const speedRegex = /Speed:?\s*(\d+(?:,\d+)?)/;
+        const glideRegex = /Glide:?\s*(\d+(?:,\d+)?)/;
+        const turnRegex = /Turn:?\s*(-?\d+(?:,\d+)?)/;
+        const fadeRegex = /Fade:?\s*(-?\d+(?:,\d+)?)/;
 
-      // Search for each flight spec
-      const speedMatch = description.match(speedRegex);
-      const glideMatch = description.match(glideRegex);
-      const turnMatch = description.match(turnRegex);
-      const fadeMatch = description.match(fadeRegex);
+        // Search for each flight spec
+        const speedMatch = description.match(speedRegex);
+        const glideMatch = description.match(glideRegex);
+        const turnMatch = description.match(turnRegex);
+        const fadeMatch = description.match(fadeRegex);
 
-      // Function to parse number with comma as decimal separator
-      const parseNumber = (str) =>
-        parseFloat(str?.replace(',', '.') || '0') || 0;
+        // Function to parse number with comma as decimal separator
+        const parseNumber = (str) =>
+          parseFloat(str?.replace(',', '.') || '0') || 0;
 
-      // Extract and assign the values
-      speed = parseNumber(speedMatch?.[1]);
-      glide = parseNumber(glideMatch?.[1]);
-      turn = parseNumber(turnMatch?.[1]);
-      fade = parseNumber(fadeMatch?.[1]);
+        // Extract and assign the values
+        speed = parseNumber(speedMatch?.[1]);
+        glide = parseNumber(glideMatch?.[1]);
+        turn = parseNumber(turnMatch?.[1]);
+        fade = parseNumber(fadeMatch?.[1]);
 
-      return [speed, glide, turn, fade] as [number, number, number, number];
-    });
+        span.end();
+
+        return [speed, glide, turn, fade] as [number, number, number, number];
+      },
+    );
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('frisbee-sor.parsePrice', () => {
+    return this.tracer.startActiveSpan('frisbee-sor.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const price = this.priceParser.parse(priceStr);
 
@@ -156,9 +163,11 @@ export class FrisbeeSorService extends BaseScraperService implements IScraper {
         .trim();
       if (originalPriceStr) {
         const originalPrice = this.priceParser.parse(originalPriceStr);
+        span.end();
         return [price, originalPrice] as [number, number];
       }
 
+      span.end();
       return [price, price] as [number, number];
     });
   }

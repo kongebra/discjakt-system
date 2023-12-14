@@ -88,7 +88,7 @@ export class ProdiscService extends BaseScraperService implements IScraper {
   }
 
   private parseFlightRatings($: CheerioAPI): [number, number, number, number] {
-    return this.tracer.startActiveSpan('prodisc.parseFlightRatings', () => {
+    return this.tracer.startActiveSpan('prodisc.parseFlightRatings', (span) => {
       const speed =
         parseFloat($(this.config.selectors.speed).text().trim()) || 0;
       const glide =
@@ -96,12 +96,14 @@ export class ProdiscService extends BaseScraperService implements IScraper {
       const turn = parseFloat($(this.config.selectors.turn).text().trim()) || 0;
       const fade = parseFloat($(this.config.selectors.fade).text().trim()) || 0;
 
+      span.end();
+
       return [speed, glide, turn, fade] as [number, number, number, number];
     });
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('prodisc.parseStock', () => {
+    return this.tracer.startActiveSpan('prodisc.parseStock', (span) => {
       const inStockText = $(this.config.selectors.inStock)
         .first()
         .text()
@@ -109,12 +111,14 @@ export class ProdiscService extends BaseScraperService implements IScraper {
       // "N på lager"
       const quantity = parseInt(inStockText.split(' ')[0]);
 
+      span.end();
+
       return [quantity > 0, quantity] as [boolean, number];
     });
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('prodisc.parsePrice', () => {
+    return this.tracer.startActiveSpan('prodisc.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const price = this.priceParser.parse(priceStr);
 
@@ -124,8 +128,11 @@ export class ProdiscService extends BaseScraperService implements IScraper {
         .trim();
       if (originalPriceStr) {
         const originalPrice = this.priceParser.parse(originalPriceStr);
+        span.end();
         return [price, originalPrice] as [number, number];
       }
+
+      span.end();
 
       return [price, price] as [number, number];
     });

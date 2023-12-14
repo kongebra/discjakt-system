@@ -76,16 +76,17 @@ export class GolfkongenService extends BaseScraperService implements IScraper {
   }
 
   private parseStock($: CheerioAPI): [boolean, number] {
-    return this.tracer.startActiveSpan('golfkongen.parseStock', () => {
+    return this.tracer.startActiveSpan('golfkongen.parseStock', (span) => {
       const inStockText = $(this.config.selectors.inStock).first().attr('href');
       const inStock = inStockText === 'http://schema.org/InStock';
 
+      span.end();
       return [inStock, 0] as [boolean, number];
     });
   }
 
   private parsePrice($: CheerioAPI): [number, number] {
-    return this.tracer.startActiveSpan('golfkongen.parsePrice', () => {
+    return this.tracer.startActiveSpan('golfkongen.parsePrice', (span) => {
       const priceStr = $(this.config.selectors.price).first().text().trim();
       const price = this.priceParser.parse(priceStr);
 
@@ -95,15 +96,17 @@ export class GolfkongenService extends BaseScraperService implements IScraper {
         .trim();
       if (originalPriceStr) {
         const originalPrice = this.priceParser.parse(originalPriceStr);
+        span.end();
         return [price, originalPrice] as [number, number];
       }
 
+      span.end();
       return [price, price] as [number, number];
     });
   }
 
   private parseStats($: CheerioAPI): [number, number, number, number] {
-    return this.tracer.startActiveSpan('golfkongen.parseStats', () => {
+    return this.tracer.startActiveSpan('golfkongen.parseStats', (span) => {
       let speed = 0,
         glide = 0,
         turn = 0,
@@ -130,6 +133,8 @@ export class GolfkongenService extends BaseScraperService implements IScraper {
       glide = parseFloat(glideStr) || 0;
       turn = parseFloat(turnStr) || 0;
       fade = parseFloat(fadeStr) || 0;
+
+      span.end();
 
       return [speed, glide, turn, fade] as [number, number, number, number];
     });
