@@ -1,5 +1,6 @@
 import { HoneycombSDK } from '@honeycombio/opentelemetry-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 
 // uses the HONEYCOMB_API_KEY and OTEL_SERVICE_NAME environment variables
 const sdk = new HoneycombSDK({
@@ -12,6 +13,7 @@ const sdk = new HoneycombSDK({
         enabled: false,
       },
     }),
+    new PrismaInstrumentation(),
   ],
 });
 
