@@ -14,8 +14,9 @@ import { FrisbeeSorService } from './frisbee-sor/frisbee-sor.service';
 @Module({
   imports: [CoreModule, UtilsModule],
   providers: [
-    AceshopService,
     ScraperService,
+    // Specific scrapers
+    AceshopService,
     FrisbeebutikkenService,
     WeAreDiscGolfService,
     KrokholdgsService,

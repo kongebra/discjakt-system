@@ -3,6 +3,7 @@ import { CoreModule } from '../core/core.module';
 import { UtilsModule } from '../utils/utils.module';
 import { SitemapService } from './sitemap.service';
 import { HttpService } from '@nestjs/axios';
+import { SitemapFilterService } from './sitemap-filter/sitemap-filter.service';
 
 jest.doMock('@nestjs/axios', () => ({
   HttpService: {
@@ -19,7 +20,7 @@ describe('SitemapService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [CoreModule, UtilsModule],
-      providers: [SitemapService],
+      providers: [SitemapService, SitemapFilterService],
     }).compile();
 
     sitemapService = module.get<SitemapService>(SitemapService);
