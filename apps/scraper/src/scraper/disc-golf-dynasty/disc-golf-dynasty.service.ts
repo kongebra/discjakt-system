@@ -55,6 +55,21 @@ export class DiscGolfDynastyService
           result.data.fade,
         ] = this.parseFlightNumber($);
 
+        span.setAttributes({
+          'product.name': result.data.name,
+          'product.brand': result.data.brand,
+          'product.category': result.data.category,
+          'product.image': result.data.image,
+          'product.price': result.data.price,
+          'product.originalPrice': result.data.originalPrice,
+          'product.inStock': result.data.inStock,
+          'product.quantity': result.data.quantity, // TODO: Implement
+          'product.speed': result.data.speed,
+          'product.glide': result.data.glide,
+          'product.turn': result.data.turn,
+          'product.fade': result.data.fade,
+        });
+
         return result;
       } catch (err) {
         span.setAttributes({
