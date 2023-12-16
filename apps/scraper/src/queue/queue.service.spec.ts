@@ -28,7 +28,7 @@ describe('QueueService', () => {
         }),
         BullModule.registerQueue(
           ...QUEUE_CONFIG.map((config) => ({
-            name: `scrape-${config.retailerSlug}`,
+            name: `${config.retailerSlug}-queue`,
             limiter: {
               max: 1,
               duration: config.crawlDelay * 1000,

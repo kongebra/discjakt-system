@@ -7,7 +7,7 @@ import { ScraperService } from '../../scraper/scraper.service';
 import { SitemapService } from '../../sitemap/sitemap.service';
 import { SitemapItem } from '../../sitemap/types';
 import { QueueService } from '../../queue/queue.service';
-import { QUEUE_CONFIG } from 'src/queue/queue.config';
+import { QUEUE_CONFIG } from '../../queue/queue.config';
 
 // TODO: Rename to better name; SitemapScheduler?
 @Injectable()

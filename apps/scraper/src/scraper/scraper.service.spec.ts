@@ -9,6 +9,7 @@ import { GolfkongenService } from './golfkongen/golfkongen.service';
 import { KrokholdgsService } from './krokholdgs/krokholdgs.service';
 import { ProdiscService } from './prodisc/prodisc.service';
 import { WeAreDiscGolfService } from './we-are-disc-golf/we-are-disc-golf.service';
+import { DiscGolfDynastyService } from './disc-golf-dynasty/disc-golf-dynasty.service';
 
 describe('ScraperService', () => {
   let service: ScraperService;
@@ -25,6 +26,7 @@ describe('ScraperService', () => {
         ProdiscService,
         GolfkongenService,
         FrisbeeSorService,
+        DiscGolfDynastyService,
       ],
       imports: [CoreModule, UtilsModule],
     }).compile();
