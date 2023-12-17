@@ -24,7 +24,7 @@ export class AceshopService extends BaseScraperService implements IScraper {
   async scrape(url: string): Promise<ScrapeResult> {
     return this.tracer.startActiveSpan('aceshop.scrape', async (span) => {
       try {
-        const [$, result] = await this.fetch(url);
+        const [$, result] = await this.fetch(url, 'latin1');
         if ($ === null) {
           return result;
         }
