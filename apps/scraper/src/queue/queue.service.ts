@@ -1,8 +1,13 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { ScrapeJob } from './queue.interface';
-import { JobOptions, Queue } from 'bull';
+import Bull, { JobOptions, Queue } from 'bull';
 import { TracerService } from '../core/tracer/tracer.service';
+
+type QueueStatsDto = {
+  total: Bull.JobCounts;
+  queues: Record<string, Bull.JobCounts>;
+};
 
 @Injectable()
 export class QueueService {
@@ -57,8 +62,19 @@ export class QueueService {
     );
   }
 
-  public async getStats() {
+  public async getStats(): Promise<QueueStatsDto> {
     const keys = Array.from(this.queues.keys());
+
+    const result: QueueStatsDto = {
+      total: {
+        active: 0,
+        completed: 0,
+        failed: 0,
+        delayed: 0,
+        waiting: 0,
+      },
+      queues: {},
+    };
 
     const stats = await Promise.all(
       keys.map(async (key) => {
@@ -66,14 +82,32 @@ export class QueueService {
 
         const counts = await queue.getJobCounts();
 
-        return {
-          name: key,
-          counts,
-        };
+        result.queues[key] = counts;
+
+        return counts;
       }),
     );
 
-    return stats;
+    result.total = stats.reduce(
+      (prev, curr) => {
+        return {
+          waiting: prev.waiting + curr.waiting,
+          active: prev.active + curr.active,
+          completed: prev.completed + curr.completed,
+          failed: prev.failed + curr.failed,
+          delayed: prev.delayed + curr.delayed,
+        };
+      },
+      {
+        waiting: 0,
+        active: 0,
+        completed: 0,
+        failed: 0,
+        delayed: 0,
+      },
+    );
+
+    return result;
   }
 
   public async empty(key: string) {
