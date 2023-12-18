@@ -6,16 +6,16 @@ import { TracerService } from '../core/tracer/tracer.service';
 
 @Injectable()
 export class QueueService {
-  private readonly scraperQueues: Record<string, Queue<ScrapeJob>>;
+  private readonly queues: Map<string, Queue<ScrapeJob>>;
 
   constructor(
     private readonly tracer: TracerService,
     @InjectQueue('aceshop-queue')
     private readonly aceshop: Queue<ScrapeJob>,
   ) {
-    this.scraperQueues = {
-      aceshop,
-    };
+    this.queues = new Map<string, Queue<ScrapeJob>>();
+
+    this.queues.set('aceshop', aceshop);
   }
 
   public async enqueueScrapeJob(data: ScrapeJob, options?: JobOptions) {
@@ -23,30 +23,27 @@ export class QueueService {
       'QueueService.enqueueScrapeJob',
       async (span) => {
         try {
-          const resolvedOptions: JobOptions = {
+          const opts: JobOptions = {
             ...options,
-            delay: await this.calculateDelay(data),
             removeOnComplete: true,
             removeOnFail: false,
           };
 
           span.setAttributes({
             'queue.retailer.slug': data.retailerSlug,
-            'queue.job.delay': resolvedOptions.delay,
             'queue.job.data.url': data.sitemapItem.loc,
             'queue.job.data.lastmod': data.sitemapItem.lastmod,
             'queue.job.data.changefreq': data.sitemapItem.changefreq,
             'queue.job.data.priority': data.sitemapItem.priority,
           });
 
-          const queue = this.scraperQueues[data.retailerSlug];
-          if (!queue) {
+          if (!this.queues.has(data.retailerSlug)) {
             throw new Error(
               `No queue found for retailer slug ${data.retailerSlug}`,
             );
           }
 
-          queue.add('scrape', data, resolvedOptions);
+          this.queues.get(data.retailerSlug).add('scrape', data, opts);
         } catch (err) {
           span.setAttributes({
             'queue.error': err.message,
@@ -60,45 +57,28 @@ export class QueueService {
     );
   }
 
-  private async calculateDelay({
-    retailerSlug,
-    crawlDelay,
-  }: ScrapeJob): Promise<number> {
-    return this.tracer.startActiveSpan(
-      'QueueService.calculateDelay',
-      async (span) => {
-        try {
-          const queue = this.scraperQueues[retailerSlug];
-          if (!queue) {
-            throw new Error(`No queue found for retailer slug ${retailerSlug}`);
-          }
+  public async getStats() {
+    const keys = Array.from(this.queues.keys());
 
-          const pendingJobs = await queue.getJobs([
-            'waiting',
-            'delayed',
-            'active',
-          ]);
-          const jobCount = pendingJobs.length;
+    const stats = await Promise.all(
+      keys.map(async (key) => {
+        const queue = this.queues.get(key);
 
-          const delay = jobCount * crawlDelay;
+        const counts = await queue.getJobCounts();
 
-          span.setAttributes({
-            'queue.retailer.slug': retailerSlug,
-            'queue.job.count': jobCount,
-            'queue.job.delay': delay,
-          });
-
-          return delay;
-        } catch (err) {
-          span.setAttributes({
-            'queue.error': err.message,
-          });
-
-          throw err;
-        } finally {
-          span.end();
-        }
-      },
+        return {
+          name: key,
+          counts,
+        };
+      }),
     );
+
+    return stats;
+  }
+
+  public async empty(key: string) {
+    const queue = this.queues.get(key);
+
+    return queue.empty();
   }
 }

@@ -1,17 +1,17 @@
 import { Controller, Get } from '@nestjs/common';
-import { RetailerService } from './retailer/retailer.service';
 import { PrismaService } from '../core/prisma/prisma.service';
+import { SitemapSchedulerService } from './sitemap-scheduler/sitemap-scheduler.service';
 
 @Controller('scheduler')
 export class SchedulerController {
   constructor(
-    private readonly retailer: RetailerService,
+    private readonly sitemapScheduler: SitemapSchedulerService,
     private readonly prisma: PrismaService,
   ) {}
 
   @Get('start')
   async start() {
-    await this.retailer.frequentScrape();
+    await this.sitemapScheduler.enqueueUpdatedRetailerProducts();
   }
 
   @Get('debug')

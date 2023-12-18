@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RetailerService } from './retailer.service';
 import { CoreModule } from '../../core/core.module';
-import { UtilsModule } from '../../utils/utils.module';
-import { SitemapModule } from '../../sitemap/sitemap.module';
-import { ScraperModule } from '../../scraper/scraper.module';
 import { QueueModule } from '../../queue/queue.module';
+import { ScraperModule } from '../../scraper/scraper.module';
+import { SitemapModule } from '../../sitemap/sitemap.module';
+import { UtilsModule } from '../../utils/utils.module';
+import { SitemapSchedulerService } from './sitemap-scheduler.service';
 
-describe('RetailerService', () => {
-  let service: RetailerService;
+describe('SitemapSchedulerService', () => {
+  let service: SitemapSchedulerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RetailerService],
+      providers: [SitemapSchedulerService],
       imports: [
         CoreModule,
         UtilsModule,
@@ -21,7 +21,7 @@ describe('RetailerService', () => {
       ],
     }).compile();
 
-    service = module.get<RetailerService>(RetailerService);
+    service = module.get<SitemapSchedulerService>(SitemapSchedulerService);
   });
 
   it('should be defined', () => {

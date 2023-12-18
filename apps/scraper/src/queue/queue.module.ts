@@ -7,6 +7,7 @@ import { AceshopQueueService } from './aceshop-queue/aceshop-queue.service';
 import { BaseQueueService } from './base-queue/base-queue.service';
 import { QUEUE_CONFIG } from './queue.config';
 import { QueueService } from './queue.service';
+import { QueueController } from './queue.controller';
 
 if (!process.env.REDISHOST) {
   throw new Error('Missing REDISHOST environment variable');
@@ -45,5 +46,6 @@ if (!process.env.REDISPASSWORD) {
   ],
   providers: [QueueService, BaseQueueService, AceshopQueueService],
   exports: [QueueService],
+  controllers: [QueueController],
 })
 export class QueueModule {}
