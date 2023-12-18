@@ -1,0 +1,10 @@
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+[*]
+end_of_line = crlf
+
+# LF for files in apps/scraper
+[apps/scraper/**]
+end_of_line = lf

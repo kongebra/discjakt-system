@@ -4,8 +4,8 @@ import { QueueModule } from '../queue/queue.module';
 import { ScraperModule } from '../scraper/scraper.module';
 import { SitemapModule } from '../sitemap/sitemap.module';
 import { UtilsModule } from '../utils/utils.module';
-import { RetailerService } from './retailer/retailer.service';
 import { SchedulerController } from './scheduler.controller';
+import { SitemapSchedulerService } from './sitemap-scheduler/sitemap-scheduler.service';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
@@ -13,7 +13,7 @@ describe('SchedulerController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SchedulerController],
-      providers: [RetailerService],
+      providers: [SitemapSchedulerService],
       imports: [
         CoreModule,
         UtilsModule,
