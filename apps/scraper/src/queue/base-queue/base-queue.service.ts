@@ -54,12 +54,14 @@ export class BaseQueueService {
 
               name: result.data.name,
               brand: result.data.brand,
-              meta_category: result.data.category,
               speed: result.data.speed,
               glide: result.data.glide,
               turn: result.data.turn,
               fade: result.data.fade,
               image_url: result.data.image,
+
+              meta_category: result.data.category,
+              meta_http_status: result.meta.httpStatus,
 
               lastmod: job.data.sitemapItem.lastmod,
               priority: job.data.sitemapItem.priority,
@@ -78,12 +80,14 @@ export class BaseQueueService {
             update: {
               name: result.data.name,
               brand: result.data.brand,
-              meta_category: result.data.category,
               speed: result.data.speed,
               glide: result.data.glide,
               turn: result.data.turn,
               fade: result.data.fade,
               image_url: result.data.image,
+
+              meta_category: result.data.category,
+              meta_http_status: result.meta.httpStatus,
 
               lastmod: job.data.sitemapItem.lastmod,
               priority: job.data.sitemapItem.priority,

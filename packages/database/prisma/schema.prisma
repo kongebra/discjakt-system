@@ -98,6 +98,8 @@ model Retailer {
     pause_crawl           Boolean @default(false)
 
     products Product[]
+
+    @@index([updated_at])
 }
 
 enum ProductCategory {
@@ -118,18 +120,20 @@ model Product {
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
 
-    name          String
-    description   String?
-    image_url     String?
-    url           String  @unique
-    lastmod       String?
-    priority      String?
-    brand         String?
-    meta_category String?
-    speed         Float   @default(0)
-    glide         Float   @default(0)
-    turn          Float   @default(0)
-    fade          Float   @default(0)
+    name        String
+    description String?
+    image_url   String?
+    url         String  @unique
+    lastmod     String?
+    priority    String?
+    brand       String?
+    speed       Float   @default(0)
+    glide       Float   @default(0)
+    turn        Float   @default(0)
+    fade        Float   @default(0)
+
+    meta_category    String?
+    meta_http_status Int?
 
     retailer      Retailer @relation(fields: [retailer_slug], references: [slug])
     retailer_slug String
