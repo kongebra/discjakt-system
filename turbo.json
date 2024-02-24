@@ -4,19 +4,21 @@
   "globalEnv": ["NODE_ENV"],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build", "^generate"],
+      "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {},
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
-    "generate": {
+    "db:generate": {
       "cache": false
     },
-    "db:push": {},
-    "db:seed": {},
+    "db:push": {
+      "cache": false
+    },
     "test": {},
     "test:watch": {
       "cache": false
