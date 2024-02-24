@@ -1,0 +1,74 @@
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["metrics", "tracing"]
+}
+
+model LaunchSignUp {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    createdAt DateTime @default(now())
+}
+
+model Disc {
+    id                      String        @id @default(uuid())
+    name                    String        @unique
+    slug                    String        @unique
+    maxWeight               Float
+    diameter                Float
+    height                  Float
+    rimDepth                Float
+    insideRimDiameter       Float
+    rimThickness            Float
+    rimDepthToDiameterRatio Float
+    rimConfiguration        String
+    flexibility             String
+    class                   String?
+    maxWeightVint           String?
+    lastYearProduction      String?
+    certificationNumber     String
+    approvedDate            DateTime
+    speed                   Float
+    glide                   Float
+    turn                    Float
+    fade                    Float
+    manufacturer            Manufacturer  @relation(fields: [manufacturerSlug], references: [slug])
+    manufacturerSlug        String
+    plastics                DiscPlastic[]
+
+    @@index([manufacturerSlug])
+}
+
+model Manufacturer {
+    id       String    @id @default(uuid())
+    name     String    @unique
+    slug     String    @unique
+    discs    Disc[]
+    plastics Plastic[]
+}
+
+model Plastic {
+    id               String        @id @default(uuid())
+    name             String        @unique
+    slug             String        @unique
+    manufacturer     Manufacturer  @relation(fields: [manufacturerSlug], references: [slug])
+    manufacturerSlug String
+    discs            DiscPlastic[]
+
+    @@index([manufacturerSlug])
+}
+
+model DiscPlastic {
+    disc        Disc    @relation(fields: [discSlug], references: [slug])
+    discSlug    String
+    plastic     Plastic @relation(fields: [plasticSlug], references: [slug])
+    plasticSlug String
+
+    @@unique([discSlug, plasticSlug])
+    @@index([plasticSlug])
+}

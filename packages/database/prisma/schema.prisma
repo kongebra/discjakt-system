@@ -56,7 +56,7 @@ model Disc {
 
     manufacturer      Manufacturer @relation(fields: [manufacturer_slug], references: [slug])
     manufacturer_slug String
-    Product           Product[]
+    products          Product[]
 
     @@index([type])
 }

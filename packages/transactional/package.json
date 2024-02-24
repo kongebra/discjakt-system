@@ -1,0 +1,21 @@
+{
+  "name": "@discjakt/transactional",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "email dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@react-email/components": "0.0.15",
+    "nodemailer": "^6.9.10",
+    "react": "^18.2.0",
+    "react-email": "2.1.0"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.14"
+  }
+}
