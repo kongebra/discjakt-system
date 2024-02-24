@@ -2,8 +2,9 @@
   "name": "@discjakt/db",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/client.ts"
+  },
   "files": [
     "dist/**"
   ],
