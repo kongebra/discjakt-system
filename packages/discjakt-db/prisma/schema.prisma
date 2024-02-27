@@ -17,7 +17,7 @@ model LaunchSignUp {
 
 model Disc {
     id                      String        @id @default(uuid())
-    name                    String        @unique
+    name                    String
     slug                    String        @unique
     maxWeight               Float
     diameter                Float
@@ -41,6 +41,8 @@ model Disc {
     manufacturerSlug        String
     plastics                DiscPlastic[]
 
+    active Boolean @default(true)
+
     @@index([manufacturerSlug])
 }
 
@@ -50,6 +52,7 @@ model Manufacturer {
     slug     String    @unique
     discs    Disc[]
     plastics Plastic[]
+    active   Boolean   @default(true)
 }
 
 model Plastic {
@@ -70,5 +73,6 @@ model DiscPlastic {
     plasticSlug String
 
     @@unique([discSlug, plasticSlug])
+    @@index([discSlug])
     @@index([plasticSlug])
 }
